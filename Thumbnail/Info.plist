@@ -7,7 +7,11 @@
 		<key>NSExtensionAttributes</key>
 		<dict>
 			<key>QLSupportedContentTypes</key>
-			<array/>
+			<array>
+				<string>com.apple.mobileprovision</string>
+				<string>com.apple.iphone.mobileprovision</string>
+				<string>com.apple.provisionprofile</string>
+			</array>
 			<key>QLThumbnailMinimumDimension</key>
 			<integer>0</integer>
 		</dict>
