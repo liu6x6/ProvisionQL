@@ -5,44 +5,29 @@
 //  Created by Evgeny Aleksandrov
 
 import Cocoa
+import Core
 import Quartz
 import SwiftUI
 
-struct PreviewContentView: View {
-    var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 64))
-                .foregroundColor(.accentColor)
-            Text("Provisioning Profile")
-                .font(.largeTitle)
-                .fontWeight(.semibold)
-        }
-        .padding(40)
-        .frame(minWidth: 400, minHeight: 300)
-        .background(Color(nsColor: .controlBackgroundColor))
-    }
-}
-
 class PreviewViewController: NSViewController, QLPreviewingController {
-    private var hostingController: NSHostingController<PreviewContentView>?
+    private var hostingController: NSHostingController<ProvisioningPreviewView>?
 
     override func loadView() {
-        let contentView = PreviewContentView()
-        let hostingController = NSHostingController(rootView: contentView)
+        let placeholderView = ProvisioningPreviewView(info: nil, fileURL: nil)
+
+        let hostingController = NSHostingController(rootView: placeholderView)
         self.hostingController = hostingController
 
         view = hostingController.view
         addChild(hostingController)
 
-        preferredContentSize = NSSize(width: 400, height: 300)
+        preferredContentSize = NSSize(width: 800, height: 600)
     }
 
     func preparePreviewOfFile(at url: URL) async throws {
-        // Add the supported content types to the QLSupportedContentTypes array in the Info.plist of the extension.
+        let info = try ProvisioningParser.parse(url)
 
-        // Perform any setup necessary in order to prepare the view.
-
-        // Quick Look will display a loading spinner until this returns.
+        let previewView = ProvisioningPreviewView(info: info, fileURL: url)
+        hostingController?.rootView = previewView
     }
 }
