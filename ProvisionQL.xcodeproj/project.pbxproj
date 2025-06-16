@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		558C13BB2E003E2900205F1C /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
 		55BC97352DFF0870008F9F5D /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97342DFF0870008F9F5D /* QuickLookThumbnailing.framework */; };
 		55BC97372DFF0870008F9F5D /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97362DFF0870008F9F5D /* Quartz.framework */; };
 		55BC973F2DFF0870008F9F5D /* Thumbnail.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55BC97322DFF0870008F9F5D /* Thumbnail.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -14,10 +15,18 @@
 		55BC975F2DFF0BA1008F9F5D /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
 		55BC97602DFF0BA1008F9F5D /* Core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55BC97682DFF0BD3008F9F5D /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
-		55BC97692DFF0BD3008F9F5D /* Core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55C1053B2E0032FE00037993 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97362DFF0870008F9F5D /* Quartz.framework */; };
+		55C105482E0032FE00037993 /* Preview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55C1053A2E0032FE00037993 /* Preview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		558C13BD2E003E2900205F1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
+			remoteInfo = Core;
+		};
 		55BC973D2DFF0870008F9F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
@@ -53,6 +62,13 @@
 			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
 			remoteInfo = Core;
 		};
+		55C105462E0032FE00037993 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 55C105392E0032FE00037993;
+			remoteInfo = Preview;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -63,6 +79,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				55BC973F2DFF0870008F9F5D /* Thumbnail.appex in Embed Foundation Extensions */,
+				55C105482E0032FE00037993 /* Preview.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -78,17 +95,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		55BC976C2DFF0BD4008F9F5D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				55BC97692DFF0BD3008F9F5D /* Core.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -98,6 +104,7 @@
 		55BC97362DFF0870008F9F5D /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		55BC974A2DFF0BA1008F9F5D /* Core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		55C1053A2E0032FE00037993 /* Preview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Preview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -107,6 +114,13 @@
 				Info.plist,
 			);
 			target = 55BC97312DFF0870008F9F5D /* Thumbnail */;
+		};
+		55C105492E0032FE00037993 /* Exceptions for "Preview" folder in "Preview" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 55C105392E0032FE00037993 /* Preview */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -132,6 +146,14 @@
 		55BC975A2DFF0BA1008F9F5D /* CoreTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = CoreTests;
+			sourceTree = "<group>";
+		};
+		55C1053C2E0032FE00037993 /* Preview */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				55C105492E0032FE00037993 /* Exceptions for "Preview" folder in "Preview" target */,
+			);
+			path = Preview;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -170,6 +192,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		55C105372E0032FE00037993 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				55C1053B2E0032FE00037993 /* Quartz.framework in Frameworks */,
+				558C13BB2E003E2900205F1C /* Core.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -178,6 +209,7 @@
 			children = (
 				55BC96FC2DFF06C6008F9F5D /* ProvisionQL */,
 				55BC97382DFF0870008F9F5D /* Thumbnail */,
+				55C1053C2E0032FE00037993 /* Preview */,
 				55BC974B2DFF0BA1008F9F5D /* Core */,
 				55BC975A2DFF0BA1008F9F5D /* CoreTests */,
 				55BC97332DFF0870008F9F5D /* Frameworks */,
@@ -192,6 +224,7 @@
 				55BC97322DFF0870008F9F5D /* Thumbnail.appex */,
 				55BC974A2DFF0BA1008F9F5D /* Core.framework */,
 				55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */,
+				55C1053A2E0032FE00037993 /* Preview.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -233,6 +266,7 @@
 			dependencies = (
 				55BC973E2DFF0870008F9F5D /* PBXTargetDependency */,
 				55BC975E2DFF0BA1008F9F5D /* PBXTargetDependency */,
+				55C105472E0032FE00037993 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				55BC96FC2DFF06C6008F9F5D /* ProvisionQL */,
@@ -251,7 +285,6 @@
 				55BC972E2DFF0870008F9F5D /* Sources */,
 				55BC972F2DFF0870008F9F5D /* Frameworks */,
 				55BC97302DFF0870008F9F5D /* Resources */,
-				55BC976C2DFF0BD4008F9F5D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -315,6 +348,29 @@
 			productReference = 55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		55C105392E0032FE00037993 /* Preview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 55C1054A2E0032FE00037993 /* Build configuration list for PBXNativeTarget "Preview" */;
+			buildPhases = (
+				55C105362E0032FE00037993 /* Sources */,
+				55C105372E0032FE00037993 /* Frameworks */,
+				55C105382E0032FE00037993 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				558C13BE2E003E2900205F1C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				55C1053C2E0032FE00037993 /* Preview */,
+			);
+			name = Preview;
+			packageProductDependencies = (
+			);
+			productName = Preview;
+			productReference = 55C1053A2E0032FE00037993 /* Preview.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -338,6 +394,9 @@
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 55BC96F92DFF06C6008F9F5D;
 					};
+					55C105392E0032FE00037993 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 55BC96F52DFF06C6008F9F5D /* Build configuration list for PBXProject "ProvisionQL" */;
@@ -356,6 +415,7 @@
 			targets = (
 				55BC96F92DFF06C6008F9F5D /* ProvisionQL */,
 				55BC97312DFF0870008F9F5D /* Thumbnail */,
+				55C105392E0032FE00037993 /* Preview */,
 				55BC97492DFF0BA1008F9F5D /* Core */,
 				55BC97532DFF0BA1008F9F5D /* CoreTests */,
 			);
@@ -385,6 +445,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		55BC97522DFF0BA1008F9F5D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		55C105382E0032FE00037993 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -422,9 +489,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		55C105362E0032FE00037993 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		558C13BE2E003E2900205F1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55BC97492DFF0BA1008F9F5D /* Core */;
+			targetProxy = 558C13BD2E003E2900205F1C /* PBXContainerItemProxy */;
+		};
 		55BC973E2DFF0870008F9F5D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 55BC97312DFF0870008F9F5D /* Thumbnail */;
@@ -449,6 +528,11 @@
 			isa = PBXTargetDependency;
 			target = 55BC97492DFF0BA1008F9F5D /* Core */;
 			targetProxy = 55BC976A2DFF0BD3008F9F5D /* PBXContainerItemProxy */;
+		};
+		55C105472E0032FE00037993 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 55C105392E0032FE00037993 /* Preview */;
+			targetProxy = 55C105462E0032FE00037993 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -593,7 +677,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -616,7 +699,6 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -637,13 +719,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Thumbnail/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Thumbnail;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.Thumbnail;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.thumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -659,13 +740,12 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Thumbnail/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Thumbnail;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.Thumbnail;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.thumbnail;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -692,7 +772,7 @@
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.Core;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.core;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_MODULE = YES;
@@ -721,7 +801,7 @@
 				);
 				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.Core;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.core;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_INSTALL_MODULE = YES;
@@ -735,7 +815,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5567X9EQ9Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.CoreTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ealeksandrov.ProvisionQL.core-tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProvisionQL.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProvisionQL";
@@ -748,10 +828,52 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 5567X9EQ9Q;
 				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.CoreTests;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ealeksandrov.ProvisionQL.core-tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProvisionQL.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProvisionQL";
+			};
+			name = Release;
+		};
+		55C1054B2E0032FE00037993 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Preview/Preview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5567X9EQ9Q;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Preview/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Preview;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.preview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		55C1054C2E0032FE00037993 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Preview/Preview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 5567X9EQ9Q;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Preview/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Preview;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.preview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
 			};
 			name = Release;
 		};
@@ -799,6 +921,15 @@
 			buildConfigurations = (
 				55BC97662DFF0BA1008F9F5D /* Debug */,
 				55BC97672DFF0BA1008F9F5D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		55C1054A2E0032FE00037993 /* Build configuration list for PBXNativeTarget "Preview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				55C1054B2E0032FE00037993 /* Debug */,
+				55C1054C2E0032FE00037993 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
