@@ -6,24 +6,36 @@
 
 import Cocoa
 import Quartz
+import SwiftUI
+
+struct PreviewContentView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 64))
+                .foregroundColor(.accentColor)
+            Text("Provisioning Profile")
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+        }
+        .padding(40)
+        .frame(minWidth: 400, minHeight: 300)
+        .background(Color(nsColor: .controlBackgroundColor))
+    }
+}
 
 class PreviewViewController: NSViewController, QLPreviewingController {
+    private var hostingController: NSHostingController<PreviewContentView>?
 
     override func loadView() {
-        let view = NSView()
-        view.wantsLayer = true
+        let contentView = PreviewContentView()
+        let hostingController = NSHostingController(rootView: contentView)
+        self.hostingController = hostingController
 
-        let label = NSTextField(labelWithString: "Hello World")
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = NSFont.systemFont(ofSize: 24)
-        label.textColor = .labelColor
-        view.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
+        view = hostingController.view
+        addChild(hostingController)
 
-        self.view = view
+        preferredContentSize = NSSize(width: 400, height: 300)
     }
 
     func preparePreviewOfFile(at url: URL) async throws {
