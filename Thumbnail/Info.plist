@@ -11,6 +11,8 @@
 				<string>com.apple.mobileprovision</string>
 				<string>com.apple.iphone.mobileprovision</string>
 				<string>com.apple.provisionprofile</string>
+				<string>com.apple.itunes.ipa</string>
+				<string>com.apple.xcode.archive</string>
 			</array>
 			<key>QLThumbnailMinimumDimension</key>
 			<integer>0</integer>

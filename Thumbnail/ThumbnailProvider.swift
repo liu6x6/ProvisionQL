@@ -15,25 +15,49 @@ class ThumbnailProvider: QLThumbnailProvider {
     ) {
         let url = request.fileURL
         let size = request.maximumSize
+        let fileExtension = url.pathExtension.lowercased()
 
-        let badgeInfo = try? ProvisioningParser.fetchBadgeInfo(from: url)
+        var icon: NSImage
+        var badgeInfo: BadgeInfo?
+        var extensionBadge: String?
+
+        switch fileExtension {
+        case "mobileprovision", "provisionprofile":
+            badgeInfo = try? ProvisioningParser.fetchBadgeInfo(from: url)
+            icon = getProvisioningIcon()
+            extensionBadge = "PROV"
+
+        case "ipa", "xcarchive":
+            icon = (try? IconExtractor.extractIcon(from: url)) ?? getDefaultAppIcon()
+            extensionBadge = fileExtension.uppercased()
+
+        default:
+            handler(nil, ThumbnailError.unsupportedFileType)
+            return
+        }
 
         let reply = QLThumbnailReply(contextSize: size, currentContextDrawing: { () -> Bool in
-            return self.drawThumbnail(in: size, badgeInfo: badgeInfo)
+            return self.drawThumbnail(in: size, icon: icon, badgeInfo: badgeInfo)
         })
-        reply.extensionBadge = "PROV"
+
+        if let extensionBadge {
+            reply.extensionBadge = extensionBadge
+        }
 
         handler(reply, nil)
+    }
+
+    enum ThumbnailError: Error {
+        case unsupportedFileType
     }
 }
 
 private extension ThumbnailProvider {
-    func drawThumbnail(in size: CGSize, badgeInfo: BadgeInfo?) -> Bool {
+    func drawThumbnail(in size: CGSize, icon: NSImage, badgeInfo: BadgeInfo?) -> Bool {
         guard let context = NSGraphicsContext.current?.cgContext else { return false }
 
-        let iconImage = getProvisioningIcon()
         let iconRect = CGRect(x: 0, y: 0, width: size.width, height: size.height)
-        if let cgImage = iconImage.cgImage(forProposedRect: nil, context: nil, hints: nil) {
+        if let cgImage = icon.cgImage(forProposedRect: nil, context: nil, hints: nil) {
             context.draw(cgImage, in: iconRect)
         }
 
@@ -81,6 +105,44 @@ private extension ThumbnailProvider {
                     height: symbolSize.height
                 )
 
+                configuredSymbol.draw(in: symbolRect)
+            }
+        }
+
+        image.unlockFocus()
+        return image
+    }
+
+    func getDefaultAppIcon() -> NSImage {
+        let iconSize = NSSize(width: 256, height: 256)
+        let image = NSImage(size: iconSize)
+        image.lockFocus()
+
+        // Create border path
+        let padding: CGFloat = 12
+        let borderPath = NSBezierPath(roundedRect: NSRect(
+            x: 0 + padding,
+            y: 0 + padding,
+            width: iconSize.width - padding * 2,
+            height: iconSize.height - padding * 2
+        ), xRadius: 56, yRadius: 56) // iOS-style rounded corners
+
+        // Fill white background
+        NSColor.white.setFill()
+        borderPath.fill()
+
+        if let symbolImage = NSImage(systemSymbolName: "app.dashed", accessibilityDescription: nil) {
+            let symbolConfig = NSImage.SymbolConfiguration(pointSize: 120, weight: .medium)
+                .applying(NSImage.SymbolConfiguration(paletteColors: [NSColor.systemGray]))
+
+            if let configuredSymbol = symbolImage.withSymbolConfiguration(symbolConfig) {
+                let symbolSize = configuredSymbol.size
+                let symbolRect = NSRect(
+                    x: (iconSize.width - symbolSize.width) / 2,
+                    y: (iconSize.height - symbolSize.height) / 2,
+                    width: symbolSize.width,
+                    height: symbolSize.height
+                )
                 configuredSymbol.draw(in: symbolRect)
             }
         }

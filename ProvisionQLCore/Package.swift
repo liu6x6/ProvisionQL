@@ -12,9 +12,13 @@ let package = Package(
             targets: ["ProvisionQLCore"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.19"),
+    ],
     targets: [
         .target(
             name: "ProvisionQLCore",
+            dependencies: ["ZIPFoundation"],
             path: "Sources",
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency")
