@@ -4,8 +4,8 @@
 //
 //  Created by Evgeny Aleksandrov
 
-@testable import Core
 import Foundation
+@testable import ProvisionQLCore
 import Testing
 
 // MARK: - Tags

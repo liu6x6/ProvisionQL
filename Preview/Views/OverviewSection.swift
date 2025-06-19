@@ -4,7 +4,7 @@
 //
 //  Created by Evgeny Aleksandrov
 
-import Core
+import ProvisionQLCore
 import SwiftUI
 
 struct OverviewSection: View {

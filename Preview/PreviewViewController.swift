@@ -5,7 +5,7 @@
 //  Created by Evgeny Aleksandrov
 
 import Cocoa
-import Core
+import ProvisionQLCore
 import Quartz
 import SwiftUI
 

@@ -5,7 +5,7 @@
 //  Created by Evgeny Aleksandrov
 
 import AppKit
-import Core
+import ProvisionQLCore
 import QuickLookThumbnailing
 
 class ThumbnailProvider: QLThumbnailProvider {

@@ -3,4 +3,5 @@ xcuserdata/
 
 # Build generated
 [Bb]uild/
+.build/
 DerivedData/

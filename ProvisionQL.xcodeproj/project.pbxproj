@@ -7,60 +7,22 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		558C13BB2E003E2900205F1C /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
+		55465FD02E0401D70008C983 /* ProvisionQLCore in Frameworks */ = {isa = PBXBuildFile; productRef = 55465FCF2E0401D70008C983 /* ProvisionQLCore */; };
+		55465FD22E0402510008C983 /* ProvisionQLCore in Frameworks */ = {isa = PBXBuildFile; productRef = 55465FD12E0402510008C983 /* ProvisionQLCore */; };
 		55BC97352DFF0870008F9F5D /* QuickLookThumbnailing.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97342DFF0870008F9F5D /* QuickLookThumbnailing.framework */; };
 		55BC97372DFF0870008F9F5D /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97362DFF0870008F9F5D /* Quartz.framework */; };
 		55BC973F2DFF0870008F9F5D /* Thumbnail.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55BC97322DFF0870008F9F5D /* Thumbnail.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		55BC97552DFF0BA1008F9F5D /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
-		55BC975F2DFF0BA1008F9F5D /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
-		55BC97602DFF0BA1008F9F5D /* Core.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		55BC97682DFF0BD3008F9F5D /* Core.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC974A2DFF0BA1008F9F5D /* Core.framework */; };
 		55C1053B2E0032FE00037993 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 55BC97362DFF0870008F9F5D /* Quartz.framework */; };
 		55C105482E0032FE00037993 /* Preview.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 55C1053A2E0032FE00037993 /* Preview.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		558C13BD2E003E2900205F1C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
-			remoteInfo = Core;
-		};
 		55BC973D2DFF0870008F9F5D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 55BC97312DFF0870008F9F5D;
 			remoteInfo = Thumbnail;
-		};
-		55BC97562DFF0BA1008F9F5D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
-			remoteInfo = Core;
-		};
-		55BC97582DFF0BA1008F9F5D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55BC96F92DFF06C6008F9F5D;
-			remoteInfo = ProvisionQL;
-		};
-		55BC975D2DFF0BA1008F9F5D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
-			remoteInfo = Core;
-		};
-		55BC976A2DFF0BD3008F9F5D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 55BC96F22DFF06C6008F9F5D /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 55BC97492DFF0BA1008F9F5D;
-			remoteInfo = Core;
 		};
 		55C105462E0032FE00037993 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -84,17 +46,6 @@
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		55BC97642DFF0BA1008F9F5D /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				55BC97602DFF0BA1008F9F5D /* Core.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -102,8 +53,6 @@
 		55BC97322DFF0870008F9F5D /* Thumbnail.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Thumbnail.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		55BC97342DFF0870008F9F5D /* QuickLookThumbnailing.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLookThumbnailing.framework; path = System/Library/Frameworks/QuickLookThumbnailing.framework; sourceTree = SDKROOT; };
 		55BC97362DFF0870008F9F5D /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		55BC974A2DFF0BA1008F9F5D /* Core.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Core.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		55C1053A2E0032FE00037993 /* Preview.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Preview.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -138,16 +87,6 @@
 			path = Thumbnail;
 			sourceTree = "<group>";
 		};
-		55BC974B2DFF0BA1008F9F5D /* Core */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Core;
-			sourceTree = "<group>";
-		};
-		55BC975A2DFF0BA1008F9F5D /* CoreTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = CoreTests;
-			sourceTree = "<group>";
-		};
 		55C1053C2E0032FE00037993 /* Preview */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -163,7 +102,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				55BC975F2DFF0BA1008F9F5D /* Core.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -172,23 +110,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				55BC97352DFF0870008F9F5D /* QuickLookThumbnailing.framework in Frameworks */,
-				55BC97682DFF0BD3008F9F5D /* Core.framework in Frameworks */,
+				55465FD02E0401D70008C983 /* ProvisionQLCore in Frameworks */,
 				55BC97372DFF0870008F9F5D /* Quartz.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		55BC97472DFF0BA1008F9F5D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		55BC97512DFF0BA1008F9F5D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				55BC97552DFF0BA1008F9F5D /* Core.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,8 +119,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55465FD22E0402510008C983 /* ProvisionQLCore in Frameworks */,
 				55C1053B2E0032FE00037993 /* Quartz.framework in Frameworks */,
-				558C13BB2E003E2900205F1C /* Core.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -210,8 +133,6 @@
 				55BC96FC2DFF06C6008F9F5D /* ProvisionQL */,
 				55BC97382DFF0870008F9F5D /* Thumbnail */,
 				55C1053C2E0032FE00037993 /* Preview */,
-				55BC974B2DFF0BA1008F9F5D /* Core */,
-				55BC975A2DFF0BA1008F9F5D /* CoreTests */,
 				55BC97332DFF0870008F9F5D /* Frameworks */,
 				55BC96FB2DFF06C6008F9F5D /* Products */,
 			);
@@ -222,8 +143,6 @@
 			children = (
 				55BC96FA2DFF06C6008F9F5D /* ProvisionQL.app */,
 				55BC97322DFF0870008F9F5D /* Thumbnail.appex */,
-				55BC974A2DFF0BA1008F9F5D /* Core.framework */,
-				55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */,
 				55C1053A2E0032FE00037993 /* Preview.appex */,
 			);
 			name = Products;
@@ -240,16 +159,6 @@
 		};
 /* End PBXGroup section */
 
-/* Begin PBXHeadersBuildPhase section */
-		55BC97452DFF0BA1008F9F5D /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXHeadersBuildPhase section */
-
 /* Begin PBXNativeTarget section */
 		55BC96F92DFF06C6008F9F5D /* ProvisionQL */ = {
 			isa = PBXNativeTarget;
@@ -259,13 +168,11 @@
 				55BC96F72DFF06C6008F9F5D /* Frameworks */,
 				55BC96F82DFF06C6008F9F5D /* Resources */,
 				55BC97442DFF0870008F9F5D /* Embed Foundation Extensions */,
-				55BC97642DFF0BA1008F9F5D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				55BC973E2DFF0870008F9F5D /* PBXTargetDependency */,
-				55BC975E2DFF0BA1008F9F5D /* PBXTargetDependency */,
 				55C105472E0032FE00037993 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
@@ -289,64 +196,17 @@
 			buildRules = (
 			);
 			dependencies = (
-				55BC976B2DFF0BD3008F9F5D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				55BC97382DFF0870008F9F5D /* Thumbnail */,
 			);
 			name = Thumbnail;
 			packageProductDependencies = (
+				55465FCF2E0401D70008C983 /* ProvisionQLCore */,
 			);
 			productName = Thumbnail;
 			productReference = 55BC97322DFF0870008F9F5D /* Thumbnail.appex */;
 			productType = "com.apple.product-type.app-extension";
-		};
-		55BC97492DFF0BA1008F9F5D /* Core */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 55BC97612DFF0BA1008F9F5D /* Build configuration list for PBXNativeTarget "Core" */;
-			buildPhases = (
-				55BC97452DFF0BA1008F9F5D /* Headers */,
-				55BC97462DFF0BA1008F9F5D /* Sources */,
-				55BC97472DFF0BA1008F9F5D /* Frameworks */,
-				55BC97482DFF0BA1008F9F5D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				55BC974B2DFF0BA1008F9F5D /* Core */,
-			);
-			name = Core;
-			packageProductDependencies = (
-			);
-			productName = Core;
-			productReference = 55BC974A2DFF0BA1008F9F5D /* Core.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		55BC97532DFF0BA1008F9F5D /* CoreTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 55BC97652DFF0BA1008F9F5D /* Build configuration list for PBXNativeTarget "CoreTests" */;
-			buildPhases = (
-				55BC97502DFF0BA1008F9F5D /* Sources */,
-				55BC97512DFF0BA1008F9F5D /* Frameworks */,
-				55BC97522DFF0BA1008F9F5D /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				55BC97572DFF0BA1008F9F5D /* PBXTargetDependency */,
-				55BC97592DFF0BA1008F9F5D /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				55BC975A2DFF0BA1008F9F5D /* CoreTests */,
-			);
-			name = CoreTests;
-			packageProductDependencies = (
-			);
-			productName = CoreTests;
-			productReference = 55BC97542DFF0BA1008F9F5D /* CoreTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		55C105392E0032FE00037993 /* Preview */ = {
 			isa = PBXNativeTarget;
@@ -359,13 +219,13 @@
 			buildRules = (
 			);
 			dependencies = (
-				558C13BE2E003E2900205F1C /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				55C1053C2E0032FE00037993 /* Preview */,
 			);
 			name = Preview;
 			packageProductDependencies = (
+				55465FD12E0402510008C983 /* ProvisionQLCore */,
 			);
 			productName = Preview;
 			productReference = 55C1053A2E0032FE00037993 /* Preview.appex */;
@@ -387,13 +247,6 @@
 					55BC97312DFF0870008F9F5D = {
 						CreatedOnToolsVersion = 16.4;
 					};
-					55BC97492DFF0BA1008F9F5D = {
-						CreatedOnToolsVersion = 16.4;
-					};
-					55BC97532DFF0BA1008F9F5D = {
-						CreatedOnToolsVersion = 16.4;
-						TestTargetID = 55BC96F92DFF06C6008F9F5D;
-					};
 					55C105392E0032FE00037993 = {
 						CreatedOnToolsVersion = 16.4;
 					};
@@ -408,6 +261,9 @@
 			);
 			mainGroup = 55BC96F12DFF06C6008F9F5D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				55465FC52E0401670008C983 /* XCLocalSwiftPackageReference "ProvisionQLCore" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 55BC96FB2DFF06C6008F9F5D /* Products */;
 			projectDirPath = "";
@@ -416,8 +272,6 @@
 				55BC96F92DFF06C6008F9F5D /* ProvisionQL */,
 				55BC97312DFF0870008F9F5D /* Thumbnail */,
 				55C105392E0032FE00037993 /* Preview */,
-				55BC97492DFF0BA1008F9F5D /* Core */,
-				55BC97532DFF0BA1008F9F5D /* CoreTests */,
 			);
 		};
 /* End PBXProject section */
@@ -431,20 +285,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		55BC97302DFF0870008F9F5D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		55BC97482DFF0BA1008F9F5D /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		55BC97522DFF0BA1008F9F5D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -475,20 +315,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		55BC97462DFF0BA1008F9F5D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		55BC97502DFF0BA1008F9F5D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		55C105362E0032FE00037993 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -499,35 +325,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		558C13BE2E003E2900205F1C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 55BC97492DFF0BA1008F9F5D /* Core */;
-			targetProxy = 558C13BD2E003E2900205F1C /* PBXContainerItemProxy */;
-		};
 		55BC973E2DFF0870008F9F5D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 55BC97312DFF0870008F9F5D /* Thumbnail */;
 			targetProxy = 55BC973D2DFF0870008F9F5D /* PBXContainerItemProxy */;
-		};
-		55BC97572DFF0BA1008F9F5D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 55BC97492DFF0BA1008F9F5D /* Core */;
-			targetProxy = 55BC97562DFF0BA1008F9F5D /* PBXContainerItemProxy */;
-		};
-		55BC97592DFF0BA1008F9F5D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 55BC96F92DFF06C6008F9F5D /* ProvisionQL */;
-			targetProxy = 55BC97582DFF0BA1008F9F5D /* PBXContainerItemProxy */;
-		};
-		55BC975E2DFF0BA1008F9F5D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 55BC97492DFF0BA1008F9F5D /* Core */;
-			targetProxy = 55BC975D2DFF0BA1008F9F5D /* PBXContainerItemProxy */;
-		};
-		55BC976B2DFF0BD3008F9F5D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 55BC97492DFF0BA1008F9F5D /* Core */;
-			targetProxy = 55BC976A2DFF0BD3008F9F5D /* PBXContainerItemProxy */;
 		};
 		55C105472E0032FE00037993 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -751,90 +552,6 @@
 			};
 			name = Release;
 		};
-		55BC97622DFF0BA1008F9F5D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5567X9EQ9Q;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.core;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-			};
-			name = Debug;
-		};
-		55BC97632DFF0BA1008F9F5D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
-				CODE_SIGN_STYLE = Automatic;
-				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = 5567X9EQ9Q;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				ENABLE_MODULE_VERIFIER = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
-				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
-				PRODUCT_BUNDLE_IDENTIFIER = com.ealeksandrov.ProvisionQL.core;
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SKIP_INSTALL = YES;
-				SWIFT_INSTALL_MODULE = YES;
-				SWIFT_INSTALL_OBJC_HEADER = NO;
-			};
-			name = Release;
-		};
-		55BC97662DFF0BA1008F9F5D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5567X9EQ9Q;
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ealeksandrov.ProvisionQL.core-tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProvisionQL.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProvisionQL";
-			};
-			name = Debug;
-		};
-		55BC97672DFF0BA1008F9F5D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 5567X9EQ9Q;
-				GENERATE_INFOPLIST_FILE = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.ealeksandrov.ProvisionQL.core-tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ProvisionQL.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ProvisionQL";
-			};
-			name = Release;
-		};
 		55C1054B2E0032FE00037993 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -907,24 +624,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		55BC97612DFF0BA1008F9F5D /* Build configuration list for PBXNativeTarget "Core" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				55BC97622DFF0BA1008F9F5D /* Debug */,
-				55BC97632DFF0BA1008F9F5D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		55BC97652DFF0BA1008F9F5D /* Build configuration list for PBXNativeTarget "CoreTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				55BC97662DFF0BA1008F9F5D /* Debug */,
-				55BC97672DFF0BA1008F9F5D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		55C1054A2E0032FE00037993 /* Build configuration list for PBXNativeTarget "Preview" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -935,6 +634,26 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		55465FC52E0401670008C983 /* XCLocalSwiftPackageReference "ProvisionQLCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ProvisionQLCore;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		55465FCF2E0401D70008C983 /* ProvisionQLCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55465FC52E0401670008C983 /* XCLocalSwiftPackageReference "ProvisionQLCore" */;
+			productName = ProvisionQLCore;
+		};
+		55465FD12E0402510008C983 /* ProvisionQLCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 55465FC52E0401670008C983 /* XCLocalSwiftPackageReference "ProvisionQLCore" */;
+			productName = ProvisionQLCore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 55BC96F22DFF06C6008F9F5D /* Project object */;
 }
