@@ -243,56 +243,112 @@ struct CoreTests {
 
     @Suite("AnyCodable Tests", .tags(.models))
     struct AnyCodableTests {
-        @Test("AnyCodable string storage")
-        func anyCodableStringStorage() {
-            let value = "test string"
-            let anyCodable = AnyCodable(value)
-            #expect(anyCodable.value as? String == value)
-        }
-
-        @Test("AnyCodable bool storage")
-        func anyCodableBoolStorage() {
-            let value = true
-            let anyCodable = AnyCodable(value)
-            #expect(anyCodable.value as? Bool == value)
-        }
-
-        @Test("AnyCodable int storage")
-        func anyCodableIntStorage() {
-            let value = 42
-            let anyCodable = AnyCodable(value)
-            #expect(anyCodable.value as? Int == value)
-        }
-
-        @Test("AnyCodable double storage")
-        func anyCodableDoubleStorage() {
-            let value = 3.14
-            let anyCodable = AnyCodable(value)
-            #expect(anyCodable.value as? Double == value)
-        }
-
-        @Test("AnyCodable array storage")
-        func anyCodableArrayStorage() {
-            let array = ["one", "two", "three"]
-            let anyCodable = AnyCodable(array)
-
-            if let storedArray = anyCodable.value as? [String] {
-                #expect(storedArray == array)
-            } else {
-                Issue.record("Failed to store array in AnyCodable")
+        @Test("AnyCodable value storage")
+        func anyCodableValueStorage() {
+            let testCases: [(Any, String)] = [
+                ("test string", "String"),
+                (true, "Bool"),
+                (42, "Int"),
+                (3.14, "Double"),
+                (["one", "two", "three"], "Array"),
+                (["key1": "value1", "key2": "value2"], "Dictionary")
+            ]
+            
+            for (value, typeName) in testCases {
+                let anyCodable = AnyCodable(value)
+                
+                switch typeName {
+                case "String":
+                    #expect(anyCodable.value as? String == value as? String)
+                case "Bool":
+                    #expect(anyCodable.value as? Bool == value as? Bool)
+                case "Int":
+                    #expect(anyCodable.value as? Int == value as? Int)
+                case "Double":
+                    #expect(anyCodable.value as? Double == value as? Double)
+                case "Array":
+                    #expect(anyCodable.value as? [String] == value as? [String])
+                case "Dictionary":
+                    #expect(anyCodable.value as? [String: String] == value as? [String: String])
+                default:
+                    Issue.record("Unexpected type: \(typeName)")
+                }
             }
         }
 
-        @Test("AnyCodable dictionary storage")
-        func anyCodableDictionaryStorage() {
-            let dict = ["key1": "value1", "key2": "value2"]
-            let anyCodable = AnyCodable(dict)
 
-            if let storedDict = anyCodable.value as? [String: String] {
-                #expect(storedDict == dict)
-            } else {
-                Issue.record("Failed to store dictionary in AnyCodable")
+        @Test("AnyCodable complex structures")
+        func anyCodableComplexStructures() throws {
+            let complexValue: [String: Any] = [
+                "string": "value",
+                "number": 42,
+                "bool": true,
+                "array": ["one", "two"],
+                "nested": ["key": "value"]
+            ]
+            
+            let anyCodable = AnyCodable(complexValue)
+            
+            // Test encoding/decoding
+            let jsonData = try JSONEncoder().encode(anyCodable)
+            let decoded = try JSONDecoder().decode(AnyCodable.self, from: jsonData)
+            
+            // Verify complex structure preservation
+            let decodedDict = try #require(decoded.value as? [String: Any])
+            #expect(decodedDict["string"] as? String == "value")
+            #expect(decodedDict["number"] as? Int == 42)
+            #expect(decodedDict["bool"] as? Bool == true)
+            #expect(decodedDict["array"] as? [String] == ["one", "two"])
+            #expect((decodedDict["nested"] as? [String: String])?["key"] == "value")
+        }
+
+        @Test("AnyCodable unsupported type throws error")
+        func anyCodableUnsupportedType() throws {
+            // Create JSON with null value
+            let jsonData = "null".data(using: .utf8)!
+            
+            let decoder = JSONDecoder()
+            #expect(throws: DecodingError.self) {
+                _ = try decoder.decode(AnyCodable.self, from: jsonData)
             }
+        }
+    }
+
+    @Suite("RawProfile Tests", .tags(.models))
+    struct RawProfileTests {
+        @Test("RawProfile Codable conformance")
+        func rawProfileCodable() throws {
+            let originalProfile = RawProfile(
+                UUID: "12345",
+                Name: "Test",
+                TeamName: "Team",
+                TeamIdentifier: ["ID"],
+                AppIDName: "App",
+                Entitlements: ["bool": AnyCodable(true), "string": AnyCodable("value")],
+                ExpirationDate: Date(),
+                CreationDate: Date(),
+                DeveloperCertificates: [Data([0x01, 0x02, 0x03])],
+                ProvisionedDevices: ["device"],
+                ProvisionsAllDevices: true,
+                Platform: ["iOS", "macOS"]
+            )
+            
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            let data = try encoder.encode(originalProfile)
+            
+            let decoder = JSONDecoder()
+            decoder.dateDecodingStrategy = .iso8601
+            let decodedProfile = try decoder.decode(RawProfile.self, from: data)
+            
+            #expect(decodedProfile.UUID == originalProfile.UUID)
+            #expect(decodedProfile.Name == originalProfile.Name)
+            #expect(decodedProfile.TeamName == originalProfile.TeamName)
+            #expect(decodedProfile.TeamIdentifier == originalProfile.TeamIdentifier)
+            #expect(decodedProfile.AppIDName == originalProfile.AppIDName)
+            #expect(decodedProfile.ProvisionedDevices == originalProfile.ProvisionedDevices)
+            #expect(decodedProfile.ProvisionsAllDevices == originalProfile.ProvisionsAllDevices)
+            #expect(decodedProfile.Platform == originalProfile.Platform)
         }
     }
 }
