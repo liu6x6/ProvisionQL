@@ -11,6 +11,11 @@ public enum ParsingError: Error, LocalizedError {
     case plistExtractionFailed
     case invalidFileFormat
     case invalidProvisioningProfile
+    case archiveExtractionFailed
+    case missingInfoPlist
+    case invalidAppBundle
+    case unsupportedFileType
+    case invalidArchiveFormat
 
     public var errorDescription: String? {
         switch self {
@@ -22,6 +27,16 @@ public enum ParsingError: Error, LocalizedError {
             "Invalid file format"
         case .invalidProvisioningProfile:
             "Invalid provisioning profile"
+        case .archiveExtractionFailed:
+            "Failed to extract files from archive"
+        case .missingInfoPlist:
+            "Missing Info.plist in app bundle"
+        case .invalidAppBundle:
+            "Invalid app bundle structure"
+        case .unsupportedFileType:
+            "Unsupported file type"
+        case .invalidArchiveFormat:
+            "Invalid archive format"
         }
     }
 }

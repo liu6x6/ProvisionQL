@@ -12,7 +12,7 @@ struct OverviewSection: View {
 
     var body: some View {
         GroupBox {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 8) {
                 InfoRow(label: "UUID", value: info.uuid)
                 InfoRow(label: "Team", value: "\(info.teamName) (\(info.teamID))")
                 InfoRow(label: "App ID", value: info.appID)

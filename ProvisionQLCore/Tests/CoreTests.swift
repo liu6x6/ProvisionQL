@@ -253,10 +253,10 @@ struct CoreTests {
                 (["one", "two", "three"], "Array"),
                 (["key1": "value1", "key2": "value2"], "Dictionary")
             ]
-            
+
             for (value, typeName) in testCases {
                 let anyCodable = AnyCodable(value)
-                
+
                 switch typeName {
                 case "String":
                     #expect(anyCodable.value as? String == value as? String)
@@ -276,7 +276,6 @@ struct CoreTests {
             }
         }
 
-
         @Test("AnyCodable complex structures")
         func anyCodableComplexStructures() throws {
             let complexValue: [String: Any] = [
@@ -286,13 +285,13 @@ struct CoreTests {
                 "array": ["one", "two"],
                 "nested": ["key": "value"]
             ]
-            
+
             let anyCodable = AnyCodable(complexValue)
-            
+
             // Test encoding/decoding
             let jsonData = try JSONEncoder().encode(anyCodable)
             let decoded = try JSONDecoder().decode(AnyCodable.self, from: jsonData)
-            
+
             // Verify complex structure preservation
             let decodedDict = try #require(decoded.value as? [String: Any])
             #expect(decodedDict["string"] as? String == "value")
@@ -306,7 +305,7 @@ struct CoreTests {
         func anyCodableUnsupportedType() throws {
             // Create JSON with null value
             let jsonData = "null".data(using: .utf8)!
-            
+
             let decoder = JSONDecoder()
             #expect(throws: DecodingError.self) {
                 _ = try decoder.decode(AnyCodable.self, from: jsonData)
@@ -332,15 +331,15 @@ struct CoreTests {
                 ProvisionsAllDevices: true,
                 Platform: ["iOS", "macOS"]
             )
-            
+
             let encoder = JSONEncoder()
             encoder.dateEncodingStrategy = .iso8601
             let data = try encoder.encode(originalProfile)
-            
+
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
             let decodedProfile = try decoder.decode(RawProfile.self, from: data)
-            
+
             #expect(decodedProfile.UUID == originalProfile.UUID)
             #expect(decodedProfile.Name == originalProfile.Name)
             #expect(decodedProfile.TeamName == originalProfile.TeamName)

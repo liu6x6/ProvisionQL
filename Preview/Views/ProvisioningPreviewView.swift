@@ -61,42 +61,7 @@ private extension ProvisioningPreviewView {
     }
 
     func header(for info: ProvisioningInfo) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(info.name)
-                .font(.title)
-                .fontWeight(.bold)
-
-            HStack(spacing: 12) {
-                StatusBadge(
-                    text: info.platform.map(\.rawValue).joined(separator: ", "),
-                    color: .blue
-                )
-
-                StatusBadge(
-                    text: info.profileType.rawValue,
-                    color: info.profileType.color
-                )
-
-                StatusBadge(
-                    text: info.expirationStatus.rawValue,
-                    color: info.expirationStatus.color
-                )
-
-                if !info.certificates.isEmpty {
-                    StatusBadge(
-                        text: "\(info.certificates.count) certs",
-                        color: .indigo
-                    )
-                }
-
-                if let deviceCount = info.devices?.count {
-                    StatusBadge(
-                        text: "\(deviceCount) devices",
-                        color: .indigo
-                    )
-                }
-            }
-        }
+        ProvisioningProfileHeader(profile: info)
     }
 
     func section(title: String, @ViewBuilder content: () -> some View) -> some View {

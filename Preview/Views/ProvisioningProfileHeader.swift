@@ -1,0 +1,59 @@
+//
+//  ProvisioningProfileHeader.swift
+//  Preview
+//
+//  Created by Evgeny Aleksandrov
+
+import ProvisionQLCore
+import SwiftUI
+
+struct ProvisioningProfileHeader: View {
+    let profile: ProvisioningInfo
+    let showTitle: Bool
+
+    init(profile: ProvisioningInfo, showTitle: Bool = true) {
+        self.profile = profile
+        self.showTitle = showTitle
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: showTitle ? 12 : 8) {
+            if showTitle {
+                Text(profile.name)
+                    .font(.title)
+                    .fontWeight(.bold)
+            }
+
+            HStack(spacing: 12) {
+                StatusBadge(
+                    text: profile.platform.map(\.rawValue).joined(separator: ", "),
+                    color: .blue
+                )
+
+                StatusBadge(
+                    text: profile.profileType.rawValue,
+                    color: profile.profileType.color
+                )
+
+                StatusBadge(
+                    text: profile.expirationStatus.rawValue,
+                    color: profile.expirationStatus.color
+                )
+
+                if !profile.certificates.isEmpty {
+                    StatusBadge(
+                        text: "\(profile.certificates.count) certs",
+                        color: .indigo
+                    )
+                }
+
+                if let deviceCount = profile.devices?.count {
+                    StatusBadge(
+                        text: "\(deviceCount) devices",
+                        color: .indigo
+                    )
+                }
+            }
+        }
+    }
+}

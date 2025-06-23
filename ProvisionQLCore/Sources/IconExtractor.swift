@@ -17,7 +17,7 @@ public enum IconExtractor {
         case "ipa":
             return try extractFromIPA(url)
         case "xcarchive":
-            return try extractFromXcArchive(url)
+            return try extractFromXCArchive(url)
         default:
             return nil
         }
@@ -43,7 +43,8 @@ private extension IconExtractor {
 
         let infoPlistPath = "\(appBundlePath)/Info.plist"
         guard let infoPlistData = try extractFile(from: archive, path: infoPlistPath),
-              let plist = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
+              let plist = try PropertyListSerialization
+              .propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
         else {
             throw IconExtractionError.infoPlistNotFound
         }
@@ -65,14 +66,24 @@ private extension IconExtractor {
         return nil
     }
 
-    static func extractFromXcArchive(_ url: URL) throws -> NSImage? {
-        let appsDir = url.appendingPathComponent("Products/Applications")
-
-        guard let appName = try? FileManager.default.contentsOfDirectory(atPath: appsDir.path).first else {
-            return nil
+    static func extractFromXCArchive(_ url: URL) throws -> NSImage? {
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+              isDirectory.boolValue
+        else {
+            throw IconExtractionError.appBundleNotFound
         }
 
-        let appURL = appsDir.appendingPathComponent(appName)
+        let appsDir = url.appendingPathComponent("Products/Applications")
+
+        // Find the app bundle in Products/Applications/
+        let appBundles = try FileManager.default.contentsOfDirectory(at: appsDir, includingPropertiesForKeys: nil)
+            .filter { $0.pathExtension == "app" }
+
+        guard let appURL = appBundles.first else {
+            throw IconExtractionError.appBundleNotFound
+        }
+
         return try extractFromAppBundle(appURL)
     }
 
@@ -92,7 +103,8 @@ private extension IconExtractor {
 
     static func extractIconFromBundle(at bundleURL: URL, infoPlistURL: URL) throws -> NSImage? {
         let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let plist = try PropertyListSerialization.propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
+        let plist = try PropertyListSerialization
+            .propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
 
         let bundleAction: (String) -> NSImage? = { iconPath in
             let iconURL = bundleURL.appendingPathComponent(iconPath)
@@ -197,7 +209,7 @@ private extension IconExtractor {
             let size2 = extractSizeFromFilename(icon2)
             return size1 > size2
         }
-        
+
         return sortedIcons.first
     }
 
@@ -237,7 +249,8 @@ private extension IconExtractor {
         let unarchiveAction: (String) -> NSImage? = { iconPath in
             let fullPath = "\(appBundlePath)/\(iconPath)"
             if let imageData = try? extractFile(from: archive, path: fullPath),
-               let image = NSImage(data: imageData) {
+               let image = NSImage(data: imageData)
+            {
                 return image
             }
             return nil
