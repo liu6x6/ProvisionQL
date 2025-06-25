@@ -18,6 +18,8 @@ public enum IconExtractor {
             return try extractFromIPA(url)
         case "xcarchive":
             return try extractFromXCArchive(url)
+        case "appex":
+            return try extractFromAppBundle(url)
         default:
             return nil
         }

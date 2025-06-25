@@ -37,6 +37,11 @@ class PreviewViewController: NSViewController, QLPreviewingController {
                 let appInfo = try AppArchiveParser.parse(url)
                 let previewView = AppArchivePreviewView(appInfo: appInfo, fileURL: url)
                 hostingController?.rootView = AnyView(previewView)
+            } else if contentType.identifier == "com.apple.application-and-system-extension" {
+                // Handle .appex files
+                let appInfo = try AppArchiveParser.parse(url)
+                let previewView = AppArchivePreviewView(appInfo: appInfo, fileURL: url)
+                hostingController?.rootView = AnyView(previewView)
             } else {
                 // Handle provisioning profile files
                 let info = try ProvisioningParser.parse(url)

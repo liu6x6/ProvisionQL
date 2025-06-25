@@ -21,6 +21,10 @@ struct AppArchivePreviewView: View {
                         InfoRow(label: "Version", value: appInfo.displayVersion)
                         InfoRow(label: "Bundle ID", value: appInfo.bundleIdentifier)
 
+                        if let extensionPointIdentifier = appInfo.extensionPointIdentifier {
+                            InfoRow(label: "Extension Point", value: extensionPointIdentifier)
+                        }
+
                         if !appInfo.deviceFamily.isEmpty {
                             InfoRow(label: "Device Family", value: appInfo.deviceFamily.joined(separator: ", "))
                         }
@@ -68,7 +72,7 @@ private extension AppArchivePreviewView {
                     .fill(Color.gray.opacity(0.3))
                     .frame(width: 64, height: 64)
                     .overlay(
-                        Image(systemName: "app")
+                        Image(systemName: isAppExtension ? "puzzlepiece.extension" : "app")
                             .font(.title)
                             .foregroundColor(.gray)
                     )
@@ -159,5 +163,10 @@ private extension AppArchivePreviewView {
         let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
         let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
         return "v\(version) (\(build))"
+    }
+    
+    var isAppExtension: Bool {
+        guard let fileURL = fileURL else { return false }
+        return fileURL.pathExtension.lowercased() == "appex"
     }
 }

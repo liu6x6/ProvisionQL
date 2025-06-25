@@ -16,6 +16,8 @@ public enum AppArchiveParser {
             return try parseIPA(url)
         case "xcarchive":
             return try parseXCArchive(url)
+        case "appex":
+            return try parseAppExtension(url)
         default:
             throw ParsingError.unsupportedFileType
         }
@@ -239,6 +241,115 @@ private extension AppArchiveParser {
         }
 
         return nil
+    }
+    
+    static func parseAppExtension(_ url: URL) throws -> AppInfo {
+        var isDirectory: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+              isDirectory.boolValue
+        else {
+            throw ParsingError.invalidArchiveFormat
+        }
+        
+        // Read Info.plist from the extension bundle
+        let infoPlistURL = url.appendingPathComponent("Info.plist")
+        let infoPlistData = try Data(contentsOf: infoPlistURL)
+        let infoPlist = try PropertyListSerialization.propertyList(
+            from: infoPlistData,
+            options: [],
+            format: nil
+        ) as? [String: Any]
+        
+        guard let plist = infoPlist else {
+            throw ParsingError.missingInfoPlist
+        }
+        
+        let appInfo = parseAppInfo(from: plist)
+        
+        let icon = try? IconExtractor.extractIcon(from: url)
+        
+        let embeddedProfileURL = url.appendingPathComponent("embedded.mobileprovision")
+        let embeddedProfile: ProvisioningInfo? = if FileManager.default.fileExists(atPath: embeddedProfileURL.path) {
+            try? ProvisioningParser.parse(embeddedProfileURL)
+        } else {
+            nil
+        }
+        
+        // Extract extension type from NSExtension dictionary
+        var extensionType: String?
+        var extensionPointIdentifier: String?
+        if let nsExtension = plist["NSExtension"] as? [String: Any],
+           let identifier = nsExtension["NSExtensionPointIdentifier"] as? String {
+            extensionPointIdentifier = identifier
+            extensionType = parseExtensionType(from: identifier)
+        }
+        
+        // For app extensions, append the extension type to the name
+        let displayName = if let extensionType = extensionType {
+            "\(appInfo.name) (\(extensionType))"
+        } else {
+            appInfo.name
+        }
+        
+        return AppInfo(
+            name: displayName,
+            bundleIdentifier: appInfo.bundleIdentifier,
+            version: appInfo.version,
+            buildNumber: appInfo.buildNumber,
+            icon: icon,
+            embeddedProvisioningProfile: embeddedProfile,
+            deviceFamily: appInfo.deviceFamily,
+            minimumOSVersion: appInfo.minimumOSVersion,
+            sdkVersion: appInfo.sdkVersion,
+            extensionPointIdentifier: extensionPointIdentifier
+        )
+    }
+    
+    static func parseExtensionType(from identifier: String) -> String {
+        switch identifier {
+        case "com.apple.intents-service":
+            return "Siri Intents"
+        case "com.apple.intents-ui-service":
+            return "Siri Intents UI"
+        case "com.apple.usernotifications.content-extension":
+            return "Notification Content"
+        case "com.apple.usernotifications.service":
+            return "Notification Service"
+        case "com.apple.share-services":
+            return "Share Extension"
+        case "com.apple.widget-extension":
+            return "Today Widget"
+        case "com.apple.widgetkit-extension":
+            return "Widget"
+        case "com.apple.keyboard-service":
+            return "Keyboard"
+        case "com.apple.photo-editing":
+            return "Photo Editing"
+        case "com.apple.broadcast-services":
+            return "Broadcast"
+        case "com.apple.callkit.call-directory":
+            return "Call Directory"
+        case "com.apple.authentication-services-account-authentication-modification-ui":
+            return "Account Auth"
+        case "com.apple.authentication-services-credential-provider-ui":
+            return "Credential Provider"
+        case "com.apple.classkit.context-provider":
+            return "ClassKit"
+        case "com.apple.fileprovider-ui":
+            return "File Provider UI"
+        case "com.apple.fileprovider-nonui":
+            return "File Provider"
+        case "com.apple.message-payload-provider":
+            return "Messages"
+        case "com.apple.networkextension.packet-tunnel":
+            return "Packet Tunnel"
+        case "com.apple.Safari.content-blocker":
+            return "Content Blocker"
+        case "com.apple.Safari.web-extension":
+            return "Safari Extension"
+        default:
+            return "App Extension"
+        }
     }
 
     static func extractEmbeddedProvisioningProfile(from archive: Archive, appBundlePath: String) -> ProvisioningInfo? {

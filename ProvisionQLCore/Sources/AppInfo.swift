@@ -17,6 +17,7 @@ public struct AppInfo {
     public let deviceFamily: [String]
     public let minimumOSVersion: String?
     public let sdkVersion: String?
+    public let extensionPointIdentifier: String?
 
     public init(
         name: String,
@@ -27,7 +28,8 @@ public struct AppInfo {
         embeddedProvisioningProfile: ProvisioningInfo? = nil,
         deviceFamily: [String] = [],
         minimumOSVersion: String? = nil,
-        sdkVersion: String? = nil
+        sdkVersion: String? = nil,
+        extensionPointIdentifier: String? = nil
     ) {
         self.name = name
         self.bundleIdentifier = bundleIdentifier
@@ -38,6 +40,7 @@ public struct AppInfo {
         self.deviceFamily = deviceFamily
         self.minimumOSVersion = minimumOSVersion
         self.sdkVersion = sdkVersion
+        self.extensionPointIdentifier = extensionPointIdentifier
     }
 }
 
