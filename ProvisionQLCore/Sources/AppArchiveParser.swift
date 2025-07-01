@@ -54,6 +54,9 @@ private extension AppArchiveParser {
         // Extract embedded provisioning profile
         let embeddedProfile = extractEmbeddedProvisioningProfile(from: archive, appBundlePath: appBundlePath)
 
+        // Extract app entitlements
+        let entitlements = extractAppEntitlements(from: archive, appBundlePath: appBundlePath)
+
         return AppInfo(
             name: appInfo.name,
             bundleIdentifier: appInfo.bundleIdentifier,
@@ -61,6 +64,7 @@ private extension AppArchiveParser {
             buildNumber: appInfo.buildNumber,
             icon: icon,
             embeddedProvisioningProfile: embeddedProfile,
+            entitlements: entitlements,
             deviceFamily: appInfo.deviceFamily,
             minimumOSVersion: appInfo.minimumOSVersion,
             sdkVersion: appInfo.sdkVersion
@@ -107,6 +111,9 @@ private extension AppArchiveParser {
             nil
         }
 
+        // Extract app entitlements
+        let entitlements = EntitlementsExtractor.extractEntitlements(from: appBundleURL)
+
         return AppInfo(
             name: appInfo.name,
             bundleIdentifier: appInfo.bundleIdentifier,
@@ -114,6 +121,7 @@ private extension AppArchiveParser {
             buildNumber: appInfo.buildNumber,
             icon: icon,
             embeddedProvisioningProfile: embeddedProfile,
+            entitlements: entitlements,
             deviceFamily: appInfo.deviceFamily,
             minimumOSVersion: appInfo.minimumOSVersion,
             sdkVersion: appInfo.sdkVersion
@@ -242,7 +250,7 @@ private extension AppArchiveParser {
 
         return nil
     }
-    
+
     static func parseAppExtension(_ url: URL) throws -> AppInfo {
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
@@ -250,7 +258,7 @@ private extension AppArchiveParser {
         else {
             throw ParsingError.invalidArchiveFormat
         }
-        
+
         // Read Info.plist from the extension bundle
         let infoPlistURL = url.appendingPathComponent("Info.plist")
         let infoPlistData = try Data(contentsOf: infoPlistURL)
@@ -259,38 +267,42 @@ private extension AppArchiveParser {
             options: [],
             format: nil
         ) as? [String: Any]
-        
+
         guard let plist = infoPlist else {
             throw ParsingError.missingInfoPlist
         }
-        
+
         let appInfo = parseAppInfo(from: plist)
-        
+
         let icon = try? IconExtractor.extractIcon(from: url)
-        
+
         let embeddedProfileURL = url.appendingPathComponent("embedded.mobileprovision")
         let embeddedProfile: ProvisioningInfo? = if FileManager.default.fileExists(atPath: embeddedProfileURL.path) {
             try? ProvisioningParser.parse(embeddedProfileURL)
         } else {
             nil
         }
-        
+
         // Extract extension type from NSExtension dictionary
         var extensionType: String?
         var extensionPointIdentifier: String?
         if let nsExtension = plist["NSExtension"] as? [String: Any],
-           let identifier = nsExtension["NSExtensionPointIdentifier"] as? String {
+           let identifier = nsExtension["NSExtensionPointIdentifier"] as? String
+        {
             extensionPointIdentifier = identifier
             extensionType = parseExtensionType(from: identifier)
         }
-        
+
         // For app extensions, append the extension type to the name
-        let displayName = if let extensionType = extensionType {
+        let displayName = if let extensionType {
             "\(appInfo.name) (\(extensionType))"
         } else {
             appInfo.name
         }
-        
+
+        // Extract app entitlements
+        let entitlements = EntitlementsExtractor.extractEntitlements(from: url)
+
         return AppInfo(
             name: displayName,
             bundleIdentifier: appInfo.bundleIdentifier,
@@ -298,57 +310,58 @@ private extension AppArchiveParser {
             buildNumber: appInfo.buildNumber,
             icon: icon,
             embeddedProvisioningProfile: embeddedProfile,
+            entitlements: entitlements,
             deviceFamily: appInfo.deviceFamily,
             minimumOSVersion: appInfo.minimumOSVersion,
             sdkVersion: appInfo.sdkVersion,
             extensionPointIdentifier: extensionPointIdentifier
         )
     }
-    
+
     static func parseExtensionType(from identifier: String) -> String {
         switch identifier {
         case "com.apple.intents-service":
-            return "Siri Intents"
+            "Siri Intents"
         case "com.apple.intents-ui-service":
-            return "Siri Intents UI"
+            "Siri Intents UI"
         case "com.apple.usernotifications.content-extension":
-            return "Notification Content"
+            "Notification Content"
         case "com.apple.usernotifications.service":
-            return "Notification Service"
+            "Notification Service"
         case "com.apple.share-services":
-            return "Share Extension"
+            "Share Extension"
         case "com.apple.widget-extension":
-            return "Today Widget"
+            "Today Widget"
         case "com.apple.widgetkit-extension":
-            return "Widget"
+            "Widget"
         case "com.apple.keyboard-service":
-            return "Keyboard"
+            "Keyboard"
         case "com.apple.photo-editing":
-            return "Photo Editing"
+            "Photo Editing"
         case "com.apple.broadcast-services":
-            return "Broadcast"
+            "Broadcast"
         case "com.apple.callkit.call-directory":
-            return "Call Directory"
+            "Call Directory"
         case "com.apple.authentication-services-account-authentication-modification-ui":
-            return "Account Auth"
+            "Account Auth"
         case "com.apple.authentication-services-credential-provider-ui":
-            return "Credential Provider"
+            "Credential Provider"
         case "com.apple.classkit.context-provider":
-            return "ClassKit"
+            "ClassKit"
         case "com.apple.fileprovider-ui":
-            return "File Provider UI"
+            "File Provider UI"
         case "com.apple.fileprovider-nonui":
-            return "File Provider"
+            "File Provider"
         case "com.apple.message-payload-provider":
-            return "Messages"
+            "Messages"
         case "com.apple.networkextension.packet-tunnel":
-            return "Packet Tunnel"
+            "Packet Tunnel"
         case "com.apple.Safari.content-blocker":
-            return "Content Blocker"
+            "Content Blocker"
         case "com.apple.Safari.web-extension":
-            return "Safari Extension"
+            "Safari Extension"
         default:
-            return "App Extension"
+            "App Extension"
         }
     }
 
@@ -372,6 +385,43 @@ private extension AppArchiveParser {
         } catch {
             try? FileManager.default.removeItem(at: tempURL)
             return nil
+        }
+    }
+
+    static func extractAppEntitlements(from archive: Archive, appBundlePath: String) -> [String: EntitlementValue] {
+        // First, try to find the executable name from Info.plist
+        let infoPlistPath = appBundlePath + "Info.plist"
+        guard let infoPlistData = try? extractFile(from: archive, path: infoPlistPath),
+              let infoPlist = try? PropertyListSerialization.propertyList(
+                  from: infoPlistData,
+                  options: [],
+                  format: nil
+              ) as? [String: Any],
+              let executableName = infoPlist["CFBundleExecutable"] as? String
+        else {
+            return [:]
+        }
+
+        // Extract the executable
+        let executablePath = appBundlePath + executableName
+        guard let executableData = try? extractFile(from: archive, path: executablePath) else {
+            return [:]
+        }
+
+        // Use the EntitlementsExtractor with temporary directory
+        let tempDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString, isDirectory: true)
+
+        do {
+            try FileManager.default.createDirectory(at: tempDirectory, withIntermediateDirectories: true)
+            defer { try? FileManager.default.removeItem(at: tempDirectory) }
+
+            return EntitlementsExtractor.extractEntitlementsFromArchive(
+                executableData: executableData,
+                temporaryDirectory: tempDirectory
+            )
+        } catch {
+            return [:]
         }
     }
 }

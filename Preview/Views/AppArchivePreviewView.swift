@@ -40,6 +40,13 @@ struct AppArchivePreviewView: View {
                     }
                 }
 
+                if !appInfo.entitlements.isEmpty {
+                    Divider()
+                    section(title: "App Entitlements") {
+                        EntitlementsSection(entitlements: appInfo.entitlements)
+                    }
+                }
+
                 if appInfo.hasEmbeddedProfile, let profile = appInfo.embeddedProvisioningProfile {
                     Divider()
                     embeddedProfileSection(profile: profile)
@@ -113,12 +120,6 @@ private extension AppArchivePreviewView {
         VStack(alignment: .leading, spacing: 12) {
             OverviewSection(info: profile)
 
-            if !profile.entitlements.isEmpty {
-                section(title: "Entitlements") {
-                    EntitlementsSection(entitlements: profile.entitlements)
-                }
-            }
-
             if !profile.certificates.isEmpty {
                 section(title: "Certificates (\(profile.certificates.count))") {
                     CertificatesSection(certificates: profile.certificates)
@@ -164,9 +165,9 @@ private extension AppArchivePreviewView {
         let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
         return "v\(version) (\(build))"
     }
-    
+
     var isAppExtension: Bool {
-        guard let fileURL = fileURL else { return false }
+        guard let fileURL else { return false }
         return fileURL.pathExtension.lowercased() == "appex"
     }
 }
