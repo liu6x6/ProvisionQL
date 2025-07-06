@@ -44,7 +44,7 @@ private extension AppArchiveParser {
         let icon = try? IconExtractor.extractIcon(from: url)
 
         // Extract embedded provisioning profile
-        let embeddedProfile = extractEmbeddedProvisioningProfile(from: archive, appBundlePath: appBundlePath)
+        let embeddedProfile = ProvisioningProfileExtractor.extractFromArchive(archive, appBundlePath: appBundlePath)
 
         // Extract app entitlements
         let entitlements = extractAppEntitlements(from: archive, appBundlePath: appBundlePath)
@@ -87,12 +87,7 @@ private extension AppArchiveParser {
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
-        let embeddedProfileURL = appBundleURL.appendingPathComponent("embedded.mobileprovision")
-        let embeddedProfile: ProvisioningInfo? = if FileManager.default.fileExists(atPath: embeddedProfileURL.path) {
-            try? ProvisioningParser.parse(embeddedProfileURL)
-        } else {
-            nil
-        }
+        let embeddedProfile = ProvisioningProfileExtractor.extractFromDirectory(appBundleURL)
 
         // Extract app entitlements
         let entitlements = EntitlementsExtractor.extractEntitlements(from: appBundleURL)
@@ -127,12 +122,7 @@ private extension AppArchiveParser {
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
-        let embeddedProfileURL = url.appendingPathComponent("embedded.mobileprovision")
-        let embeddedProfile: ProvisioningInfo? = if FileManager.default.fileExists(atPath: embeddedProfileURL.path) {
-            try? ProvisioningParser.parse(embeddedProfileURL)
-        } else {
-            nil
-        }
+        let embeddedProfile = ProvisioningProfileExtractor.extractFromDirectory(url)
 
         // Extract extension type from NSExtension dictionary
         var extensionType: String?
@@ -213,29 +203,6 @@ private extension AppArchiveParser {
             "Safari Extension"
         default:
             "App Extension"
-        }
-    }
-
-    static func extractEmbeddedProvisioningProfile(from archive: Archive, appBundlePath: String) -> ProvisioningInfo? {
-        let profilePath = appBundlePath + "embedded.mobileprovision"
-
-        guard let profileData = try? ArchiveUtilities.extractFile(from: archive, path: profilePath) else {
-            return nil
-        }
-
-        // Create a temporary file to parse the provisioning profile
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
-            .appendingPathComponent(UUID().uuidString)
-            .appendingPathExtension("mobileprovision")
-
-        do {
-            try profileData.write(to: tempURL)
-            let provisioningInfo = try ProvisioningParser.parse(tempURL)
-            try FileManager.default.removeItem(at: tempURL)
-            return provisioningInfo
-        } catch {
-            try? FileManager.default.removeItem(at: tempURL)
-            return nil
         }
     }
 
