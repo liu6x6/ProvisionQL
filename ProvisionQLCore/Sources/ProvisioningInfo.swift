@@ -74,20 +74,17 @@ extension ProvisioningInfo {
         }
         certificates = certificateInfos
 
-        // Process entitlements
-        var entitlementDict: [String: EntitlementValue] = [:]
-        if let rawEntitlements = profile.Entitlements {
-            for (key, value) in rawEntitlements {
-                if let entitlementValue = EntitlementValue.from(anyCodable: value) {
-                    entitlementDict[key] = entitlementValue
-                }
-            }
-        }
-        entitlements = entitlementDict
+        // Process entitlements - now directly using EntitlementValue
+        entitlements = profile.Entitlements ?? [:]
 
         // Determine profile type
         let hasDevices = profile.ProvisionedDevices != nil
-        let getTaskAllow = (profile.Entitlements?["get-task-allow"]?.value as? Bool) ?? false
+        let getTaskAllow: Bool = {
+            if case .bool(let value) = profile.Entitlements?["get-task-allow"] {
+                return value
+            }
+            return false
+        }()
         let isEnterprise = profile.ProvisionsAllDevices ?? false
 
         if hasDevices {

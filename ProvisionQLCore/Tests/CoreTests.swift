@@ -45,7 +45,7 @@ struct CoreTests {
                 TeamName: "Test Team",
                 TeamIdentifier: ["ABC123"],
                 AppIDName: "Test App",
-                Entitlements: ["get-task-allow": AnyCodable(true)],
+                Entitlements: ["get-task-allow": .bool(true)],
                 ExpirationDate: Date().addingTimeInterval(86400 * 60), // 60 days from now
                 CreationDate: Date(),
                 DeveloperCertificates: nil,
@@ -101,8 +101,8 @@ struct CoreTests {
                 TeamIdentifier: ["ABCD123456"],
                 AppIDName: "My Test App",
                 Entitlements: [
-                    "get-task-allow": AnyCodable(true),
-                    "application-identifier": AnyCodable("ABCD123456.com.test.app")
+                    "get-task-allow": .bool(true),
+                    "application-identifier": .string("ABCD123456.com.test.app")
                 ],
                 ExpirationDate: expirationDate,
                 CreationDate: creationDate,
@@ -138,7 +138,7 @@ struct CoreTests {
                 TeamName: "Test Team",
                 TeamIdentifier: ["ABC123"],
                 AppIDName: "Test App",
-                Entitlements: getTaskAllow ? ["get-task-allow": AnyCodable(true)] : [:],
+                Entitlements: getTaskAllow ? ["get-task-allow": .bool(true)] : [:],
                 ExpirationDate: Date().addingTimeInterval(86400),
                 CreationDate: Date(),
                 DeveloperCertificates: nil,
@@ -241,74 +241,54 @@ struct CoreTests {
         }
     }
 
-    @Suite("AnyCodable Tests", .tags(.models))
-    struct AnyCodableTests {
-        @Test("AnyCodable value storage")
-        func anyCodableValueStorage() {
-            let testCases: [(Any, String)] = [
-                ("test string", "String"),
-                (true, "Bool"),
-                (42, "Int"),
-                (3.14, "Double"),
-                (["one", "two", "three"], "Array"),
-                (["key1": "value1", "key2": "value2"], "Dictionary")
+    @Suite("EntitlementValue Tests", .tags(.models))
+    struct EntitlementValueTests {
+        @Test("EntitlementValue creation from different types")
+        func entitlementValueCreation() {
+            // Test direct creation
+            let stringValue = EntitlementValue.string("test")
+            let boolValue = EntitlementValue.bool(true)
+            let arrayValue = EntitlementValue.array(["one", "two"])
+            let dictValue = EntitlementValue.dictionary(["key": "value"])
+
+            #expect(stringValue == .string("test"))
+            #expect(boolValue == .bool(true))
+            #expect(arrayValue == .array(["one", "two"]))
+            #expect(dictValue == .dictionary(["key": "value"]))
+        }
+
+        @Test("EntitlementValue from Any conversion")
+        func entitlementValueFromAny() {
+            let testCases: [(Any, EntitlementValue?)] = [
+                ("test string", .string("test string")),
+                (true, .bool(true)),
+                (42, .string("42")),
+                (3.14, .string("3.14")),
+                (["one", "two"], .array(["one", "two"])),
+                (["key": "value"], .dictionary(["key": "value"])),
+                ([1, 2, 3], .array(["1", "2", "3"])),
+                (["key": 42], .dictionary(["key": "42"]))
             ]
 
-            for (value, typeName) in testCases {
-                let anyCodable = AnyCodable(value)
-
-                switch typeName {
-                case "String":
-                    #expect(anyCodable.value as? String == value as? String)
-                case "Bool":
-                    #expect(anyCodable.value as? Bool == value as? Bool)
-                case "Int":
-                    #expect(anyCodable.value as? Int == value as? Int)
-                case "Double":
-                    #expect(anyCodable.value as? Double == value as? Double)
-                case "Array":
-                    #expect(anyCodable.value as? [String] == value as? [String])
-                case "Dictionary":
-                    #expect(anyCodable.value as? [String: String] == value as? [String: String])
-                default:
-                    Issue.record("Unexpected type: \(typeName)")
-                }
+            for (value, expected) in testCases {
+                let result = EntitlementValue.from(value: value)
+                #expect(result == expected)
             }
         }
 
-        @Test("AnyCodable complex structures")
-        func anyCodableComplexStructures() throws {
-            let complexValue: [String: Any] = [
-                "string": "value",
-                "number": 42,
-                "bool": true,
-                "array": ["one", "two"],
-                "nested": ["key": "value"]
+        @Test("EntitlementValue Codable conformance")
+        func entitlementValueCodable() throws {
+            let testCases: [EntitlementValue] = [
+                .string("test"),
+                .bool(true),
+                .array(["one", "two"]),
+                .dictionary(["key": "value"])
             ]
 
-            let anyCodable = AnyCodable(complexValue)
-
-            // Test encoding/decoding
-            let jsonData = try JSONEncoder().encode(anyCodable)
-            let decoded = try JSONDecoder().decode(AnyCodable.self, from: jsonData)
-
-            // Verify complex structure preservation
-            let decodedDict = try #require(decoded.value as? [String: Any])
-            #expect(decodedDict["string"] as? String == "value")
-            #expect(decodedDict["number"] as? Int == 42)
-            #expect(decodedDict["bool"] as? Bool == true)
-            #expect(decodedDict["array"] as? [String] == ["one", "two"])
-            #expect((decodedDict["nested"] as? [String: String])?["key"] == "value")
-        }
-
-        @Test("AnyCodable unsupported type throws error")
-        func anyCodableUnsupportedType() throws {
-            // Create JSON with null value
-            let jsonData = "null".data(using: .utf8)!
-
-            let decoder = JSONDecoder()
-            #expect(throws: DecodingError.self) {
-                _ = try decoder.decode(AnyCodable.self, from: jsonData)
+            for original in testCases {
+                let data = try JSONEncoder().encode(original)
+                let decoded = try JSONDecoder().decode(EntitlementValue.self, from: data)
+                #expect(decoded == original)
             }
         }
     }
@@ -323,7 +303,7 @@ struct CoreTests {
                 TeamName: "Team",
                 TeamIdentifier: ["ID"],
                 AppIDName: "App",
-                Entitlements: ["bool": AnyCodable(true), "string": AnyCodable("value")],
+                Entitlements: ["bool": .bool(true), "string": .string("value")],
                 ExpirationDate: Date(),
                 CreationDate: Date(),
                 DeveloperCertificates: [Data([0x01, 0x02, 0x03])],

@@ -163,7 +163,7 @@ private func createMockProvisioningInfo() -> ProvisioningInfo {
         TeamName: "Test Team",
         TeamIdentifier: ["ABC123"],
         AppIDName: "Test App",
-        Entitlements: ["get-task-allow": AnyCodable(true)],
+        Entitlements: ["get-task-allow": .bool(true)],
         ExpirationDate: Date().addingTimeInterval(86400 * 60),
         CreationDate: Date(),
         DeveloperCertificates: nil,
