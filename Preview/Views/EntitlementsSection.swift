@@ -12,13 +12,8 @@ struct EntitlementsSection: View {
 
     var body: some View {
         Text(formattedEntitlements)
-            .font(.system(.body, design: .monospaced))
-            .textSelection(.enabled)
-            .padding(.vertical, 12)
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(nsColor: .controlBackgroundColor))
-            .cornerRadius(8)
+            .codeText()
+            .sectionBackground()
     }
 }
 

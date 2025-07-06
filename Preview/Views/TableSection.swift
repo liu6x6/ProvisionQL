@@ -21,17 +21,17 @@ struct TableSection<Content: View, RowContent: View, Element: Hashable>: View {
         if !data.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
                 header
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .padding(.horizontal, UIConstants.Padding.standard)
+                    .padding(.vertical, UIConstants.Padding.medium)
                     .background(Color(nsColor: .controlBackgroundColor))
-                    .clipShape(UnevenRoundedRectangle(topLeadingRadius: 6, topTrailingRadius: 6))
+                    .clipShape(UnevenRoundedRectangle(topLeadingRadius: UIConstants.CornerRadius.medium, topTrailingRadius: UIConstants.CornerRadius.medium))
 
                 ForEach(data.indices, id: \.self) { index in
                     TableRow(content: rowContent(data[index]), isLast: index == data.count - 1)
                 }
             }
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: UIConstants.CornerRadius.medium)
                     .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
             )
         }
@@ -45,8 +45,8 @@ struct TableRow<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             content
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, UIConstants.Padding.standard)
+                .padding(.vertical, UIConstants.Padding.medium)
                 .background(Color(nsColor: .controlBackgroundColor).opacity(0.3))
 
             if !isLast {
@@ -55,8 +55,8 @@ struct TableRow<Content: View>: View {
             }
         }
         .clipShape(UnevenRoundedRectangle(
-            bottomLeadingRadius: isLast ? 6 : 0,
-            bottomTrailingRadius: isLast ? 6 : 0
+            bottomLeadingRadius: isLast ? UIConstants.CornerRadius.medium : 0,
+            bottomTrailingRadius: isLast ? UIConstants.CornerRadius.medium : 0
         ))
     }
 }

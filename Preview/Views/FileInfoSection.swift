@@ -40,20 +40,14 @@ struct FileInfoSection: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: UIConstants.Padding.small) {
             Text(fileName)
-                .font(.system(.body, design: .monospaced))
-                .textSelection(.enabled)
+                .codeText()
 
             Text("\(fileSize), Modified \(modificationDate)")
-                .font(.system(.subheadline, design: .monospaced))
+                .codeText(.subheadline)
                 .foregroundColor(.secondary)
-                .textSelection(.enabled)
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(nsColor: .controlBackgroundColor))
-        .cornerRadius(8)
+        .sectionBackground()
     }
 }

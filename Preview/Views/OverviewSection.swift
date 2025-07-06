@@ -12,7 +12,7 @@ struct OverviewSection: View {
 
     var body: some View {
         GroupBox {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: UIConstants.Padding.medium) {
                 InfoRow(label: "UUID", value: info.uuid)
                 InfoRow(label: "Team", value: "\(info.teamName) (\(info.teamID))")
                 InfoRow(label: "App ID", value: info.appID)
@@ -30,7 +30,7 @@ extension ExpirationStatus {
         switch self {
         case .expired: .red
         case .expiring: .orange
-        case .valid: Color(red: 0.0, green: 0.6, blue: 0.0)
+        case .valid: UIConstants.Color.validGreen
         }
     }
 }
@@ -43,7 +43,7 @@ struct InfoRow: View {
         HStack(alignment: .top) {
             Text(label)
                 .fontWeight(.medium)
-                .frame(minWidth: 100, alignment: .leading)
+                .frame(minWidth: UIConstants.Size.minLabelWidth, alignment: .leading)
                 .foregroundColor(.secondary)
 
             Text(value)

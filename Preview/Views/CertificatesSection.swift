@@ -19,7 +19,7 @@ struct CertificatesSection: View {
 
                 Text("Expires")
                     .fontWeight(.semibold)
-                    .frame(width: 150, alignment: .trailing)
+                    .frame(width: UIConstants.Width.dateColumn, alignment: .trailing)
             }
         } rowContent: { certificate in
             HStack {
@@ -33,11 +33,11 @@ struct CertificatesSection: View {
                     Text(expirationDate.formatted(date: .abbreviated, time: .omitted))
                         .font(.system(.body, design: .monospaced))
                         .foregroundColor(isExpired ? .red : .primary)
-                        .frame(width: 150, alignment: .trailing)
+                        .frame(width: UIConstants.Width.dateColumn, alignment: .trailing)
                 } else {
                     Text("Unknown")
                         .foregroundColor(.secondary)
-                        .frame(width: 150, alignment: .trailing)
+                        .frame(width: UIConstants.Width.dateColumn, alignment: .trailing)
                 }
             }
         }

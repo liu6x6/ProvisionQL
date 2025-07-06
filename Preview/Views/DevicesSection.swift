@@ -24,8 +24,7 @@ struct DevicesSection: View {
         } rowContent: { device in
             HStack {
                 Text(device)
-                    .font(.system(.body, design: .monospaced))
-                    .textSelection(.enabled)
+                    .codeText()
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }

@@ -24,7 +24,7 @@ struct ProvisioningPreviewView: View {
 private extension ProvisioningPreviewView {
     func documentContent(for info: ProvisioningInfo) -> some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: UIConstants.Padding.standard) {
                 header(for: info)
 
                 OverviewSection(info: info)
@@ -57,7 +57,7 @@ private extension ProvisioningPreviewView {
             }
             .padding()
         }
-        .frame(minWidth: 600, minHeight: 400)
+        .frame(minWidth: UIConstants.Window.minWidth, minHeight: UIConstants.Window.minHeight)
     }
 
     func header(for info: ProvisioningInfo) -> some View {
@@ -102,7 +102,7 @@ extension ProvisioningInfo.ProfileType {
         switch self {
         case .development: .blue
         case .adHoc: .purple
-        case .appStore: Color(red: 0.0, green: 0.6, blue: 0.0)
+        case .appStore: UIConstants.Color.validGreen
         case .enterprise: .orange
         }
     }
@@ -116,10 +116,10 @@ struct StatusBadge: View {
         Text(text)
             .font(.subheadline)
             .fontWeight(.medium)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, UIConstants.Padding.medium)
+            .padding(.vertical, UIConstants.Padding.small)
             .background(color.opacity(0.2))
             .foregroundColor(color)
-            .cornerRadius(4)
+            .cornerRadius(UIConstants.CornerRadius.small)
     }
 }

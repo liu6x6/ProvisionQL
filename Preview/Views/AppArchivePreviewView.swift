@@ -13,11 +13,11 @@ struct AppArchivePreviewView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: UIConstants.Padding.standard) {
                 appHeader()
 
                 GroupBox {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: UIConstants.Padding.medium) {
                         InfoRow(label: "Version", value: appInfo.displayVersion)
                         InfoRow(label: "Bundle ID", value: appInfo.bundleIdentifier)
 
@@ -62,22 +62,22 @@ struct AppArchivePreviewView: View {
             }
             .padding()
         }
-        .frame(minWidth: 600, minHeight: 400)
+        .frame(minWidth: UIConstants.Window.minWidth, minHeight: UIConstants.Window.minHeight)
     }
 }
 
 private extension AppArchivePreviewView {
     func appHeader() -> some View {
-        HStack(alignment: .top, spacing: 16) {
+        HStack(alignment: .top, spacing: UIConstants.Padding.large) {
             if let icon = appInfo.icon {
                 Image(nsImage: icon)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 64, height: 64)
+                    .frame(width: UIConstants.Size.iconSize, height: UIConstants.Size.iconSize)
             } else {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: UIConstants.CornerRadius.large)
                     .fill(Color.gray.opacity(0.3))
-                    .frame(width: 64, height: 64)
+                    .frame(width: UIConstants.Size.iconSize, height: UIConstants.Size.iconSize)
                     .overlay(
                         Image(systemName: isAppExtension ? "puzzlepiece.extension" : "app")
                             .font(.title)
@@ -85,7 +85,7 @@ private extension AppArchivePreviewView {
                     )
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: UIConstants.Padding.small) {
                 Text(appInfo.name)
                     .font(.title)
                     .fontWeight(.bold)
@@ -101,9 +101,9 @@ private extension AppArchivePreviewView {
 
     func embeddedProfileSection(profile: ProvisioningInfo) -> some View {
         section(title: "Embedded Provisioning Profile") {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: UIConstants.Padding.standard) {
                 // Profile header with smaller title
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: UIConstants.Padding.medium) {
                     Text(profile.name)
                         .font(.headline)
                         .fontWeight(.semibold)
@@ -117,7 +117,7 @@ private extension AppArchivePreviewView {
     }
 
     func profileContent(for profile: ProvisioningInfo) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: UIConstants.Padding.standard) {
             OverviewSection(info: profile)
 
             if !profile.certificates.isEmpty {

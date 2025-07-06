@@ -17,14 +17,14 @@ struct ProvisioningProfileHeader: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: showTitle ? 12 : 8) {
+        VStack(alignment: .leading, spacing: showTitle ? UIConstants.Padding.standard : UIConstants.Padding.medium) {
             if showTitle {
                 Text(profile.name)
                     .font(.title)
                     .fontWeight(.bold)
             }
 
-            HStack(spacing: 12) {
+            HStack(spacing: UIConstants.Padding.standard) {
                 StatusBadge(
                     text: profile.platform.map(\.rawValue).joined(separator: ", "),
                     color: .blue
