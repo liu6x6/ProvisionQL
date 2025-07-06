@@ -32,19 +32,19 @@ private extension IconExtractor {
 
         let artworkNames = ["iTunesArtwork@3x", "iTunesArtwork@2x", "iTunesArtwork"]
         for artworkName in artworkNames {
-            if let imageData = try extractFile(from: archive, path: artworkName),
+            if let imageData = try ArchiveUtilities.extractFileOptional(from: archive, path: artworkName),
                let image = NSImage(data: imageData)
             {
                 return applyRoundedCorners(to: image)
             }
         }
 
-        guard let appBundlePath = try findAppBundlePath(in: archive) else {
+        guard let appBundlePath = ArchiveUtilities.findAppBundlePathFlexible(in: archive) else {
             throw IconExtractionError.appBundleNotFound
         }
 
         let infoPlistPath = "\(appBundlePath)/Info.plist"
-        guard let infoPlistData = try extractFile(from: archive, path: infoPlistPath),
+        guard let infoPlistData = try ArchiveUtilities.extractFileOptional(from: archive, path: infoPlistPath),
               let plist = try PropertyListSerialization
               .propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
         else {
@@ -250,7 +250,7 @@ private extension IconExtractor {
     static func findIconInArchive(archive: Archive, appBundlePath: String, iconName: String) throws -> NSImage? {
         let unarchiveAction: (String) -> NSImage? = { iconPath in
             let fullPath = "\(appBundlePath)/\(iconPath)"
-            if let imageData = try? extractFile(from: archive, path: fullPath),
+            if let imageData = try? ArchiveUtilities.extractFileOptional(from: archive, path: fullPath),
                let image = NSImage(data: imageData)
             {
                 return image
@@ -259,46 +259,6 @@ private extension IconExtractor {
         }
 
         return findIcon(iconName: iconName, using: unarchiveAction)
-    }
-
-    static func extractFile(from archive: Archive, path: String) throws -> Data? {
-        // Try exact match first
-        if let entry = archive[path] {
-            return try extractData(from: entry, in: archive)
-        }
-
-        // Try case-insensitive search
-        for entry in archive {
-            if entry.path.lowercased() == path.lowercased() {
-                return try extractData(from: entry, in: archive)
-            }
-        }
-
-        return nil
-    }
-
-    static func extractData(from entry: Entry, in archive: Archive) throws -> Data {
-        var data = Data()
-        _ = try archive.extract(entry) { chunk in
-            data.append(chunk)
-        }
-        return data
-    }
-
-    static func findAppBundlePath(in archive: Archive) throws -> String? {
-        for entry in archive {
-            let path = entry.path
-            if path.hasPrefix("Payload/"), path.hasSuffix(".app/") {
-                return String(path.dropLast()) // Remove trailing slash
-            }
-            if path.hasPrefix("Payload/"), path.contains(".app/") {
-                let components = path.components(separatedBy: "/")
-                if let appIndex = components.firstIndex(where: { $0.hasSuffix(".app") }) {
-                    return components[0 ... appIndex].joined(separator: "/")
-                }
-            }
-        }
-        return nil
     }
 }
 

@@ -30,11 +30,11 @@ private extension AppArchiveParser {
         let archive = try Archive(data: fileData, accessMode: .read)
 
         // Find the app bundle path within the archive
-        let appBundlePath = try findAppBundlePath(in: archive, isIPA: true)
+        let appBundlePath = try ArchiveUtilities.findAppBundlePath(in: archive, archiveType: .ipa)
 
         // Extract Info.plist
         let infoPlistPath = appBundlePath + "Info.plist"
-        let infoPlistData = try extractFile(from: archive, path: infoPlistPath)
+        let infoPlistData = try ArchiveUtilities.extractFile(from: archive, path: infoPlistPath)
         let infoPlist = try PropertyListSerialization.propertyList(
             from: infoPlistData,
             options: [],
@@ -158,39 +158,6 @@ private extension AppArchiveParser {
             minimumOSVersion: minimumOSVersion,
             sdkVersion: sdkVersion
         )
-    }
-
-    static func findAppBundlePath(in archive: Archive, isIPA: Bool) throws -> String {
-        if isIPA {
-            // Look for Payload/*.app/
-            for entry in archive {
-                if entry.path.hasPrefix("Payload/"), entry.path.hasSuffix(".app/") {
-                    return entry.path
-                }
-            }
-        } else {
-            // Look for Products/Applications/*.app/
-            for entry in archive {
-                if entry.path.hasPrefix("Products/Applications/"), entry.path.hasSuffix(".app/") {
-                    return entry.path
-                }
-            }
-        }
-
-        throw ParsingError.invalidAppBundle
-    }
-
-    static func extractFile(from archive: Archive, path: String) throws -> Data {
-        guard let entry = archive[path] else {
-            throw ParsingError.archiveExtractionFailed
-        }
-
-        var data = Data()
-        _ = try archive.extract(entry) { chunk in
-            data.append(chunk)
-        }
-
-        return data
     }
 
     static func extractDeviceFamily(from plist: [String: Any]) -> [String] {
@@ -368,7 +335,7 @@ private extension AppArchiveParser {
     static func extractEmbeddedProvisioningProfile(from archive: Archive, appBundlePath: String) -> ProvisioningInfo? {
         let profilePath = appBundlePath + "embedded.mobileprovision"
 
-        guard let profileData = try? extractFile(from: archive, path: profilePath) else {
+        guard let profileData = try? ArchiveUtilities.extractFile(from: archive, path: profilePath) else {
             return nil
         }
 
@@ -391,7 +358,7 @@ private extension AppArchiveParser {
     static func extractAppEntitlements(from archive: Archive, appBundlePath: String) -> [String: EntitlementValue] {
         // First, try to find the executable name from Info.plist
         let infoPlistPath = appBundlePath + "Info.plist"
-        guard let infoPlistData = try? extractFile(from: archive, path: infoPlistPath),
+        guard let infoPlistData = try? ArchiveUtilities.extractFile(from: archive, path: infoPlistPath),
               let infoPlist = try? PropertyListSerialization.propertyList(
                   from: infoPlistData,
                   options: [],
@@ -404,7 +371,7 @@ private extension AppArchiveParser {
 
         // Extract the executable
         let executablePath = appBundlePath + executableName
-        guard let executableData = try? extractFile(from: archive, path: executablePath) else {
+        guard let executableData = try? ArchiveUtilities.extractFile(from: archive, path: executablePath) else {
             return [:]
         }
 
