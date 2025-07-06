@@ -44,12 +44,11 @@ private extension IconExtractor {
         }
 
         let infoPlistPath = "\(appBundlePath)/Info.plist"
-        guard let infoPlistData = try ArchiveUtilities.extractFileOptional(from: archive, path: infoPlistPath),
-              let plist = try PropertyListSerialization
-              .propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
-        else {
+        guard let infoPlistData = try ArchiveUtilities.extractFileOptional(from: archive, path: infoPlistPath) else {
             throw IconExtractionError.infoPlistNotFound
         }
+
+        let plist = try PlistParser.parse(data: infoPlistData)
 
         if let iconName = findMainIconName(in: plist),
            let image = try findIconInArchive(archive: archive, appBundlePath: appBundlePath, iconName: iconName)
@@ -104,9 +103,7 @@ private extension IconExtractor {
     }
 
     static func extractIconFromBundle(at bundleURL: URL, infoPlistURL: URL) throws -> NSImage? {
-        let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let plist = try PropertyListSerialization
-            .propertyList(from: infoPlistData, options: [], format: nil) as? [String: Any]
+        let plist = try PlistParser.parse(url: infoPlistURL)
 
         let bundleAction: (String) -> NSImage? = { iconPath in
             let iconURL = bundleURL.appendingPathComponent(iconPath)

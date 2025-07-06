@@ -35,18 +35,10 @@ private extension AppArchiveParser {
         // Extract Info.plist
         let infoPlistPath = appBundlePath + "Info.plist"
         let infoPlistData = try ArchiveUtilities.extractFile(from: archive, path: infoPlistPath)
-        let infoPlist = try PropertyListSerialization.propertyList(
-            from: infoPlistData,
-            options: [],
-            format: nil
-        ) as? [String: Any]
-
-        guard let plist = infoPlist else {
-            throw ParsingError.missingInfoPlist
-        }
+        let plist = try PlistParser.parse(data: infoPlistData)
 
         // Parse app information
-        let appInfo = parseAppInfo(from: plist)
+        var appInfo = PlistParser.extractAppInfo(from: plist)
 
         // Extract app icon using the dedicated IconExtractor
         let icon = try? IconExtractor.extractIcon(from: url)
@@ -89,18 +81,9 @@ private extension AppArchiveParser {
         }
 
         let infoPlistURL = appBundleURL.appendingPathComponent("Info.plist")
-        let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let infoPlist = try PropertyListSerialization.propertyList(
-            from: infoPlistData,
-            options: [],
-            format: nil
-        ) as? [String: Any]
+        let plist = try PlistParser.parse(url: infoPlistURL)
 
-        guard let plist = infoPlist else {
-            throw ParsingError.missingInfoPlist
-        }
-
-        let appInfo = parseAppInfo(from: plist)
+        var appInfo = PlistParser.extractAppInfo(from: plist)
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
@@ -128,96 +111,6 @@ private extension AppArchiveParser {
         )
     }
 
-    static func parseAppInfo(from plist: [String: Any]) -> (
-        name: String,
-        bundleIdentifier: String,
-        version: String,
-        buildNumber: String,
-        deviceFamily: [String],
-        minimumOSVersion: String?,
-        sdkVersion: String?
-    ) {
-        let name = plist["CFBundleDisplayName"] as? String ??
-            plist["CFBundleName"] as? String ??
-            "Unknown App"
-        let bundleIdentifier = plist["CFBundleIdentifier"] as? String ?? "Unknown"
-        let version = plist["CFBundleShortVersionString"] as? String ?? "1.0"
-        let buildNumber = plist["CFBundleVersion"] as? String ?? "1"
-
-        // Extract device family and SDK information
-        let deviceFamily = extractDeviceFamily(from: plist)
-        let minimumOSVersion = extractMinimumOSVersion(from: plist)
-        let sdkVersion = extractSDKVersion(from: plist)
-
-        return (
-            name: name,
-            bundleIdentifier: bundleIdentifier,
-            version: version,
-            buildNumber: buildNumber,
-            deviceFamily: deviceFamily,
-            minimumOSVersion: minimumOSVersion,
-            sdkVersion: sdkVersion
-        )
-    }
-
-    static func extractDeviceFamily(from plist: [String: Any]) -> [String] {
-        var devices: [String] = []
-
-        if let deviceFamily = plist["UIDeviceFamily"] as? [Int] {
-            for family in deviceFamily {
-                switch family {
-                case 1: devices.append("iPhone")
-                case 2: devices.append("iPad")
-                case 3: devices.append("Apple TV")
-                case 4: devices.append("Apple Watch")
-                case 6: devices.append("Mac (Designed for iPad)")
-                case 7: devices.append("Apple Vision")
-                default: break
-                }
-            }
-        }
-
-        return devices.sorted()
-    }
-
-    static func extractMinimumOSVersion(from plist: [String: Any]) -> String? {
-        // iOS minimum version
-        if let minimumOSVersion = plist["MinimumOSVersion"] as? String {
-            return minimumOSVersion
-        }
-
-        // macOS minimum version
-        if let minimumSystemVersion = plist["LSMinimumSystemVersion"] as? String {
-            return minimumSystemVersion
-        }
-
-        // watchOS minimum version
-        if let minimumWatchOSVersion = plist["WKMinimumWatchOSVersion"] as? String {
-            return minimumWatchOSVersion
-        }
-
-        return nil
-    }
-
-    static func extractSDKVersion(from plist: [String: Any]) -> String? {
-        // Check DTSDKName first (more specific)
-        if let sdkName = plist["DTSDKName"] as? String {
-            return sdkName
-        }
-
-        // Check DTSDKBuild
-        if let sdkBuild = plist["DTSDKBuild"] as? String {
-            return sdkBuild
-        }
-
-        // Check DTPlatformVersion
-        if let platformVersion = plist["DTPlatformVersion"] as? String {
-            return platformVersion
-        }
-
-        return nil
-    }
-
     static func parseAppExtension(_ url: URL) throws -> AppInfo {
         var isDirectory: ObjCBool = false
         guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
@@ -228,18 +121,9 @@ private extension AppArchiveParser {
 
         // Read Info.plist from the extension bundle
         let infoPlistURL = url.appendingPathComponent("Info.plist")
-        let infoPlistData = try Data(contentsOf: infoPlistURL)
-        let infoPlist = try PropertyListSerialization.propertyList(
-            from: infoPlistData,
-            options: [],
-            format: nil
-        ) as? [String: Any]
+        let plist = try PlistParser.parse(url: infoPlistURL)
 
-        guard let plist = infoPlist else {
-            throw ParsingError.missingInfoPlist
-        }
-
-        let appInfo = parseAppInfo(from: plist)
+        var appInfo = PlistParser.extractAppInfo(from: plist)
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
@@ -359,12 +243,8 @@ private extension AppArchiveParser {
         // First, try to find the executable name from Info.plist
         let infoPlistPath = appBundlePath + "Info.plist"
         guard let infoPlistData = try? ArchiveUtilities.extractFile(from: archive, path: infoPlistPath),
-              let infoPlist = try? PropertyListSerialization.propertyList(
-                  from: infoPlistData,
-                  options: [],
-                  format: nil
-              ) as? [String: Any],
-              let executableName = infoPlist["CFBundleExecutable"] as? String
+              let plist = try? PlistParser.parse(data: infoPlistData),
+              let executableName = PlistParser.extractExecutableName(from: plist)
         else {
             return [:]
         }
