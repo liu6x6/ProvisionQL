@@ -146,7 +146,7 @@ private extension AppArchivePreviewView {
 
     func footer() -> some View {
         HStack {
-            Text("ProvisionQL \(versionString)")
+            Text("ProvisionQL \(AppVersion.versionString)")
 
             #if DEBUG
                 Text("(debug)")
@@ -157,13 +157,6 @@ private extension AppArchivePreviewView {
         .foregroundColor(.secondary)
         .font(.subheadline)
         .frame(maxWidth: .infinity)
-    }
-
-    var versionString: String {
-        let bundle = Bundle(for: PreviewViewController.self)
-        let version = bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Unknown"
-        let build = bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Unknown"
-        return "v\(version) (\(build))"
     }
 
     var isAppExtension: Bool {
