@@ -142,10 +142,9 @@ struct AppArchiveTests {
             #expect(ipaInfo.minimumOSVersion == "15.0")
             #expect(ipaInfo.sdkVersion == "iphoneos18.0")
 
-            // Test xcarchive file
+            // Test xcarchive file (should be a directory structure, not a ZIP)
             let xcarchiveInfoPlist = createMockInfoPlistData()
-            let xcarchiveFiles = ["Products/Applications/TestApp.app/Info.plist": xcarchiveInfoPlist]
-            let xcarchiveURL = createTempZipArchive(withFiles: xcarchiveFiles, extension: "xcarchive")
+            let xcarchiveURL = createTempXCArchiveDirectory(withInfoPlist: xcarchiveInfoPlist)
             defer { try? FileManager.default.removeItem(at: xcarchiveURL) }
 
             let xcarchiveInfo = try AppArchiveParser.parse(xcarchiveURL)
@@ -242,6 +241,22 @@ private func createTempZipArchive(withFiles files: [String: Data], extension ext
             return data.subdata(in: start ..< end)
         }
     }
+
+    return tempURL
+}
+
+private func createTempXCArchiveDirectory(withInfoPlist infoPlistData: Data) -> URL {
+    let tempURL = URL(fileURLWithPath: NSTemporaryDirectory())
+        .appendingPathComponent(UUID().uuidString)
+        .appendingPathExtension("xcarchive")
+
+    // Create the xcarchive directory structure
+    let productsPath = tempURL.appendingPathComponent("Products/Applications")
+    let appBundlePath = productsPath.appendingPathComponent("TestApp.app")
+    let infoPlistPath = appBundlePath.appendingPathComponent("Info.plist")
+
+    try! FileManager.default.createDirectory(at: appBundlePath, withIntermediateDirectories: true)
+    try! infoPlistData.write(to: infoPlistPath)
 
     return tempURL
 }
