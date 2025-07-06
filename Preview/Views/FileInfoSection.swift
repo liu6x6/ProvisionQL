@@ -18,15 +18,29 @@ struct FileInfoSection: View {
     }
 
     var fileSize: String {
-        guard let attributes = fileAttributes,
-              let size = attributes[.size] as? NSNumber
-        else {
-            return "Unknown size"
+        var size: Int64 = 0
+
+        // Check if the URL is a directory
+        var isDirectory: ObjCBool = false
+        if FileManager.default.fileExists(atPath: fileURL.path, isDirectory: &isDirectory),
+           isDirectory.boolValue
+        {
+            // Calculate total size of directory contents
+            size = calculateDirectorySize(at: fileURL)
+        } else {
+            // For regular files, use the file attributes
+            if let fileAttributes,
+               let fileSize = fileAttributes[.size] as? NSNumber
+            {
+                size = fileSize.int64Value
+            } else {
+                return "Unknown size"
+            }
         }
 
         let formatter = ByteCountFormatter()
         formatter.countStyle = .file
-        return formatter.string(fromByteCount: size.int64Value)
+        return formatter.string(fromByteCount: size)
     }
 
     var modificationDate: String {
@@ -49,5 +63,37 @@ struct FileInfoSection: View {
                 .foregroundColor(.secondary)
         }
         .sectionBackground()
+    }
+
+    private func calculateDirectorySize(at url: URL) -> Int64 {
+        var totalSize: Int64 = 0
+
+        let fileManager = FileManager.default
+        let resourceKeys: [URLResourceKey] = [.fileSizeKey, .isRegularFileKey]
+
+        guard let enumerator = fileManager.enumerator(
+            at: url,
+            includingPropertiesForKeys: resourceKeys,
+            options: [.skipsHiddenFiles]
+        ) else {
+            return 0
+        }
+
+        for case let fileURL as URL in enumerator {
+            do {
+                let resourceValues = try fileURL.resourceValues(forKeys: Set(resourceKeys))
+                if let isRegularFile = resourceValues.isRegularFile,
+                   isRegularFile,
+                   let fileSize = resourceValues.fileSize
+                {
+                    totalSize += Int64(fileSize)
+                }
+            } catch {
+                // Skip files that can't be accessed
+                continue
+            }
+        }
+
+        return totalSize
     }
 }
