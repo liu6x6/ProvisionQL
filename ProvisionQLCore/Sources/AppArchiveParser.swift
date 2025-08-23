@@ -38,7 +38,7 @@ private extension AppArchiveParser {
         let plist = try PlistParser.parse(data: infoPlistData)
 
         // Parse app information
-        var appInfo = PlistParser.extractAppInfo(from: plist)
+        let appInfo = PlistParser.extractAppInfo(from: plist)
 
         // Extract app icon using the dedicated IconExtractor
         let icon = try? IconExtractor.extractIcon(from: url)
@@ -83,7 +83,7 @@ private extension AppArchiveParser {
         let infoPlistURL = appBundleURL.appendingPathComponent("Info.plist")
         let plist = try PlistParser.parse(url: infoPlistURL)
 
-        var appInfo = PlistParser.extractAppInfo(from: plist)
+        let appInfo = PlistParser.extractAppInfo(from: plist)
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
@@ -118,7 +118,7 @@ private extension AppArchiveParser {
         let infoPlistURL = url.appendingPathComponent("Info.plist")
         let plist = try PlistParser.parse(url: infoPlistURL)
 
-        var appInfo = PlistParser.extractAppInfo(from: plist)
+        let appInfo = PlistParser.extractAppInfo(from: plist)
 
         let icon = try? IconExtractor.extractIcon(from: url)
 
