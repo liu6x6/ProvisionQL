@@ -1,5 +1,9 @@
 # ProvisionQL
 
+## Version 2.0.0
+
+* WIP: macOS 15 compatibility
+
 ## Version 1.6.4
 
 * Adds error handling to entitlements parsing ([#47](https://github.com/ealeksandrov/ProvisionQL/pull/47))
