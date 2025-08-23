@@ -11,7 +11,11 @@ struct TableSection<Content: View, RowContent: View, Element: Hashable>: View {
     let data: [Element]
     let rowContent: (Element) -> RowContent
 
-    init(data: [Element], @ViewBuilder header: () -> Content, @ViewBuilder rowContent: @escaping (Element) -> RowContent) {
+    init(
+        data: [Element],
+        @ViewBuilder header: () -> Content,
+        @ViewBuilder rowContent: @escaping (Element) -> RowContent
+    ) {
         self.header = header()
         self.data = data
         self.rowContent = rowContent
@@ -24,7 +28,10 @@ struct TableSection<Content: View, RowContent: View, Element: Hashable>: View {
                     .padding(.horizontal, UIConstants.Padding.standard)
                     .padding(.vertical, UIConstants.Padding.medium)
                     .background(Color(nsColor: .controlBackgroundColor))
-                    .clipShape(UnevenRoundedRectangle(topLeadingRadius: UIConstants.CornerRadius.medium, topTrailingRadius: UIConstants.CornerRadius.medium))
+                    .clipShape(UnevenRoundedRectangle(
+                        topLeadingRadius: UIConstants.CornerRadius.medium,
+                        topTrailingRadius: UIConstants.CornerRadius.medium
+                    ))
 
                 ForEach(data.indices, id: \.self) { index in
                     TableRow(content: rowContent(data[index]), isLast: index == data.count - 1)

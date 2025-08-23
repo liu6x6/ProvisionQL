@@ -126,12 +126,32 @@ struct CoreTests {
         }
 
         @Test("Profile type detection", arguments: [
-            (hasDevices: true, getTaskAllow: true, isEnterprise: false, expected: ProvisioningInfo.ProfileType.development),
+            (
+                hasDevices: true,
+                getTaskAllow: true,
+                isEnterprise: false,
+                expected: ProvisioningInfo.ProfileType.development
+            ),
             (hasDevices: true, getTaskAllow: false, isEnterprise: false, expected: ProvisioningInfo.ProfileType.adHoc),
-            (hasDevices: false, getTaskAllow: false, isEnterprise: true, expected: ProvisioningInfo.ProfileType.enterprise),
-            (hasDevices: false, getTaskAllow: false, isEnterprise: false, expected: ProvisioningInfo.ProfileType.appStore)
+            (
+                hasDevices: false,
+                getTaskAllow: false,
+                isEnterprise: true,
+                expected: ProvisioningInfo.ProfileType.enterprise
+            ),
+            (
+                hasDevices: false,
+                getTaskAllow: false,
+                isEnterprise: false,
+                expected: ProvisioningInfo.ProfileType.appStore
+            )
         ])
-        func profileTypeDetection(hasDevices: Bool, getTaskAllow: Bool, isEnterprise: Bool, expected: ProvisioningInfo.ProfileType) {
+        func profileTypeDetection(
+            hasDevices: Bool,
+            getTaskAllow: Bool,
+            isEnterprise: Bool,
+            expected: ProvisioningInfo.ProfileType
+        ) {
             let mockProfile = RawProfile(
                 UUID: "FEDCBA09-8765-4321-FEDC-BA0987654321",
                 Name: "Test Profile",
@@ -158,7 +178,10 @@ struct CoreTests {
             (platformStrings: ["tvOS"], expected: [ProvisioningInfo.Platform.tvOS]),
             (platformStrings: ["watchOS"], expected: [ProvisioningInfo.Platform.watchOS]),
             (platformStrings: ["visionOS"], expected: [ProvisioningInfo.Platform.visionOS]),
-            (platformStrings: ["iOS", "macOS"], expected: [ProvisioningInfo.Platform.iOS, ProvisioningInfo.Platform.macOS]),
+            (
+                platformStrings: ["iOS", "macOS"],
+                expected: [ProvisioningInfo.Platform.iOS, ProvisioningInfo.Platform.macOS]
+            ),
             (platformStrings: ["unknown"], expected: [ProvisioningInfo.Platform.iOS]),
             (platformStrings: nil, expected: [ProvisioningInfo.Platform.iOS])
         ])
