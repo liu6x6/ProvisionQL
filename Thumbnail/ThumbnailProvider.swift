@@ -27,7 +27,7 @@ class ThumbnailProvider: QLThumbnailProvider {
             icon = getProvisioningIcon()
             extensionBadge = "PROV"
 
-        case "ipa", "xcarchive", "appex":
+        case "ipa", "xcarchive", "appex", "app":
             icon = (try? IconExtractor.extractIcon(from: url)) ?? getDefaultAppIcon()
             extensionBadge = fileExtension.uppercased()
 

@@ -31,9 +31,10 @@ class PreviewViewController: NSViewController, QLPreviewingController {
         if let contentType = fileType {
             // Check for IPA files (which conform to data) or xcarchive files (which conform to package)
             if contentType.identifier == "com.apple.itunes.ipa" ||
-                contentType.identifier == "com.apple.xcode.archive"
+                contentType.identifier == "com.apple.xcode.archive" ||
+                contentType.identifier == "com.apple.application-bundle"
             {
-                // Handle ipa/xcarchive files
+                // Handle ipa/xcarchive/app files
                 let appInfo = try AppArchiveParser.parse(url)
                 let previewView = AppArchivePreviewView(appInfo: appInfo, fileURL: url)
                 hostingController?.rootView = AnyView(previewView)

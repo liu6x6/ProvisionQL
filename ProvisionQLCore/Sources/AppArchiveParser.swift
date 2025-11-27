@@ -18,6 +18,8 @@ public enum AppArchiveParser {
             return try parseXCArchive(url)
         case "appex":
             return try parseAppExtension(url)
+        case "app":
+            return try parseApp(url)
         default:
             throw ParsingError.unsupportedFileType
         }
@@ -25,6 +27,38 @@ public enum AppArchiveParser {
 }
 
 private extension AppArchiveParser {
+   static func parseApp(_ url: URL) throws -> AppInfo {
+       var isDirectory: ObjCBool = false
+       guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+             isDirectory.boolValue
+       else {
+           throw ParsingError.invalidAppBundle
+       }
+
+       let infoPlistURL = url.appendingPathComponent("Contents/Info.plist")
+       guard FileManager.default.fileExists(atPath: infoPlistURL.path) else {
+           throw ParsingError.missingInfoPlist
+       }
+
+       let plist = try PlistParser.parse(url: infoPlistURL)
+       let appInfo = PlistParser.extractAppInfo(from: plist)
+       let icon = try? IconExtractor.extractIcon(from: url)
+       let embeddedProfile = ProvisioningProfileExtractor.extractFromDirectory(url)
+       let entitlements = EntitlementsExtractor.extractEntitlements(from: url)
+
+       return AppInfo(
+           name: appInfo.name,
+           bundleIdentifier: appInfo.bundleIdentifier,
+           version: appInfo.version,
+           buildNumber: appInfo.buildNumber,
+           icon: icon,
+           embeddedProvisioningProfile: embeddedProfile,
+           entitlements: entitlements,
+           deviceFamily: appInfo.deviceFamily,
+           minimumOSVersion: appInfo.minimumOSVersion,
+           sdkVersion: appInfo.sdkVersion
+       )
+   }
     static func parseIPA(_ url: URL) throws -> AppInfo {
         let fileData = try Data(contentsOf: url)
         let archive = try Archive(data: fileData, accessMode: .read)
