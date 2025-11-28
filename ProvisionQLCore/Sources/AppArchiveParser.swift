@@ -6,6 +6,7 @@
 
 import Foundation
 import ZIPFoundation
+import Cocoa
 
 public enum AppArchiveParser {
     public static func parse(_ url: URL) throws -> AppInfo {
@@ -42,7 +43,8 @@ private extension AppArchiveParser {
 
        let plist = try PlistParser.parse(url: infoPlistURL)
        let appInfo = PlistParser.extractAppInfo(from: plist)
-       let icon = try? IconExtractor.extractIcon(from: url)
+       let iconPath = url.appendingPathComponent("Contents/Resources/AppIcon.icns")
+       let icon = NSImage(contentsOf: iconPath)
        let embeddedProfile = ProvisioningProfileExtractor.extractFromDirectory(url)
        let entitlements = EntitlementsExtractor.extractEntitlements(from: url)
 
