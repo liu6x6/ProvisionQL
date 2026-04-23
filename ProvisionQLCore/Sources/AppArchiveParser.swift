@@ -8,6 +8,7 @@ import Foundation
 import ZIPFoundation
 import Cocoa
 import OSLog
+import SwiftAXML
 
 public enum AppArchiveParser {
     static let logger = Logger(subsystem: "com.ProvisionQLCore", category: "AppArchiveParser")
@@ -29,14 +30,6 @@ public enum AppArchiveParser {
         default:
             throw ParsingError.unsupportedFileType
         }
-    }
-}
-
-public struct AAptResource {
-    /// Package 内部获取 aapt2 路径的方法
-    public static var aapt2URL: URL? {
-        // 因为没有后缀名，withExtension 传 nil
-        return Bundle.module.url(forResource: "aapt2", withExtension: nil)
     }
 }
 
@@ -184,10 +177,11 @@ private extension AppArchiveParser {
         }
 
         // For app extensions, append the extension type to the name
-        let displayName = if let extensionType {
-            "\(appInfo.name) (\(extensionType))"
+        let displayName: String
+        if let extensionType = extensionType {
+            displayName = "\(appInfo.name) (\(extensionType))"
         } else {
-            appInfo.name
+            displayName = appInfo.name
         }
 
         // Extract app entitlements
@@ -211,47 +205,47 @@ private extension AppArchiveParser {
     static func parseExtensionType(from identifier: String) -> String {
         switch identifier {
         case "com.apple.intents-service":
-            "Siri Intents"
+            return "Siri Intents"
         case "com.apple.intents-ui-service":
-            "Siri Intents UI"
+            return "Siri Intents UI"
         case "com.apple.usernotifications.content-extension":
-            "Notification Content"
+            return "Notification Content"
         case "com.apple.usernotifications.service":
-            "Notification Service"
+            return "Notification Service"
         case "com.apple.share-services":
-            "Share Extension"
+            return "Share Extension"
         case "com.apple.widget-extension":
-            "Today Widget"
+            return "Today Widget"
         case "com.apple.widgetkit-extension":
-            "Widget"
+            return "Widget"
         case "com.apple.keyboard-service":
-            "Keyboard"
+            return "Keyboard"
         case "com.apple.photo-editing":
-            "Photo Editing"
+            return "Photo Editing"
         case "com.apple.broadcast-services":
-            "Broadcast"
+            return "Broadcast"
         case "com.apple.callkit.call-directory":
-            "Call Directory"
+            return "Call Directory"
         case "com.apple.authentication-services-account-authentication-modification-ui":
-            "Account Auth"
+            return "Account Auth"
         case "com.apple.authentication-services-credential-provider-ui":
-            "Credential Provider"
+            return "Credential Provider"
         case "com.apple.classkit.context-provider":
-            "ClassKit"
+            return "ClassKit"
         case "com.apple.fileprovider-ui":
-            "File Provider UI"
+            return "File Provider UI"
         case "com.apple.fileprovider-nonui":
-            "File Provider"
+            return "File Provider"
         case "com.apple.message-payload-provider":
-            "Messages"
+            return "Messages"
         case "com.apple.networkextension.packet-tunnel":
-            "Packet Tunnel"
+            return "Packet Tunnel"
         case "com.apple.Safari.content-blocker":
-            "Content Blocker"
+            return "Content Blocker"
         case "com.apple.Safari.web-extension":
-            "Safari Extension"
+            return "Safari Extension"
         default:
-            "App Extension"
+            return "App Extension"
         }
     }
 
@@ -288,89 +282,35 @@ private extension AppArchiveParser {
         }
     }
 
-  public static func parseAPK(_ url: URL) throws -> AppInfo {
-        guard let aapt2Url = Bundle.module.url(forResource: "aapt2", withExtension: nil) else {
-            logger.error("could not find aapt2")
-            throw ParsingError.aapt2NotFound
+    static func parseAPK(_ url: URL) throws -> AppInfo {
+        let fileData = try Data(contentsOf: url)
+        let archive = try Archive(data: fileData, accessMode: .read)
+
+        let manifestPath = "AndroidManifest.xml"
+        guard let entry = archive[manifestPath] else {
+            throw ParsingError.missingInfoPlist
         }
 
-        let isSecured = url.startAccessingSecurityScopedResource()
-
-        let task = Process()
-        task.executableURL = aapt2Url
-        task.arguments = ["dump", "badging", url.path]
-
-        let pipe = Pipe()
-        task.standardOutput = pipe
-        task.standardError = pipe
-
-        do {
-            try task.run()
-//            task.waitUntilExit()
-
-        } catch {
-            throw ParsingError.aapt2ExecutionFailed(error)
+        var manifestData = Data()
+        _ = try archive.extract(entry) { data in
+            manifestData.append(data)
         }
 
-        let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        task.waitUntilExit()
-
-
-
-        guard task.terminationStatus == 0 else {
-            throw ParsingError.invalidArchiveFormat
-        }
-
-        let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-
-        let packageName = extractValue(from: output, for: "package: name")
-        let versionName = extractValue(from: output, for: "versionName")
-        let versionCode = extractValue(from: output, for: "versionCode")
-        let applicationLabel = extractValue(from: output, for: "application-label")
-        let permissions = extractPermissions(from: output)
-
-      // 3. 【非常重要】用完之后必须释放权限，否则会导致系统内存泄露
-         if isSecured {
-             url.stopAccessingSecurityScopedResource()
-         }
+        let axml = try AXMLManifestParser(data: manifestData)
+        let versionName = axml.version
+        let versionCode = axml.buildNumber
 
         return AppInfo(
-            name: applicationLabel,
-            bundleIdentifier: packageName,
+            name: axml.name,
+            bundleIdentifier: axml.bundleIdentifier,
             version: versionName,
             buildNumber: versionCode,
             icon: nil,
             embeddedProvisioningProfile: nil,
-            entitlements: permissions.reduce(into: [:]) { $0[$1] = .string($1) },
+            entitlements: axml.permissions.reduce(into: [:]) { $0[$1] = .string($1) },
             deviceFamily: [],
-            minimumOSVersion: nil,
-            sdkVersion: nil
+            minimumOSVersion: axml.minimumOSVersion,
+            sdkVersion: axml.sdkVersion
         )
-    }
-
-    private static func extractValue(from output: String, for key: String) -> String {
-        let pattern = "\(key)='([^']*)'"
-        let regex = try? NSRegularExpression(pattern: pattern)
-        let range = NSRange(location: 0, length: output.utf16.count)
-        if let match = regex?.firstMatch(in: output, options: [], range: range) {
-            if let valueRange = Range(match.range(at: 1), in: output) {
-                return String(output[valueRange])
-            }
-        }
-        return ""
-    }
-
-    private static func extractPermissions(from output: String) -> [String] {
-        let pattern = "uses-permission: name='([^']*)'"
-        let regex = try? NSRegularExpression(pattern: pattern)
-        let range = NSRange(location: 0, length: output.utf16.count)
-        let matches = regex?.matches(in: output, options: [], range: range) ?? []
-
-        return matches.compactMap {
-            if let valueRange = Range($0.range(at: 1), in: output) {
-                return String(output[valueRange])
-            }
-            return nil
-        }
     }
 }

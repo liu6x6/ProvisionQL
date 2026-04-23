@@ -14,15 +14,16 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", from: "0.9.19"),
+        .package(url: "https://github.com/liu6x6/SwiftAXML.git", revision: "b7e8b99a141fc82da444423731b8b71588d6b6d0"),
     ],
     targets: [
         .target(
             name: "ProvisionQLCore",
-            dependencies: ["ZIPFoundation"],
-            path: "Sources",
-            resources: [
-                .copy("Resources/aapt2")
+            dependencies: [
+                "ZIPFoundation",
+                "SwiftAXML",
             ],
+            path: "Sources",
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency")
             ]
