@@ -16,6 +16,8 @@ public enum ParsingError: Error, LocalizedError {
     case invalidAppBundle
     case unsupportedFileType
     case invalidArchiveFormat
+    case aapt2NotFound
+    case aapt2ExecutionFailed(Error)
 
     public var errorDescription: String? {
         switch self {
@@ -37,6 +39,10 @@ public enum ParsingError: Error, LocalizedError {
             "Unsupported file type"
         case .invalidArchiveFormat:
             "Invalid archive format"
+        case .aapt2NotFound:
+            "aapt2 executable not found in bundle"
+        case .aapt2ExecutionFailed(let error):
+            "Failed to execute aapt2: \(error.localizedDescription)"
         }
     }
 }

@@ -7,8 +7,11 @@
 import Foundation
 import ZIPFoundation
 import Cocoa
+import OSLog
 
 public enum AppArchiveParser {
+    static let logger = Logger(subsystem: "com.ProvisionQLCore", category: "AppArchiveParser")
+
     public static func parse(_ url: URL) throws -> AppInfo {
         let fileExtension = url.pathExtension.lowercased()
 
@@ -21,9 +24,19 @@ public enum AppArchiveParser {
             return try parseAppExtension(url)
         case "app":
             return try parseApp(url)
+        case "apk":
+            return try parseAPK(url)
         default:
             throw ParsingError.unsupportedFileType
         }
+    }
+}
+
+public struct AAptResource {
+    /// Package 内部获取 aapt2 路径的方法
+    public static var aapt2URL: URL? {
+        // 因为没有后缀名，withExtension 传 nil
+        return Bundle.module.url(forResource: "aapt2", withExtension: nil)
     }
 }
 
@@ -272,6 +285,92 @@ private extension AppArchiveParser {
             )
         } catch {
             return [:]
+        }
+    }
+
+  public static func parseAPK(_ url: URL) throws -> AppInfo {
+        guard let aapt2Url = Bundle.module.url(forResource: "aapt2", withExtension: nil) else {
+            logger.error("could not find aapt2")
+            throw ParsingError.aapt2NotFound
+        }
+
+        let isSecured = url.startAccessingSecurityScopedResource()
+
+        let task = Process()
+        task.executableURL = aapt2Url
+        task.arguments = ["dump", "badging", url.path]
+
+        let pipe = Pipe()
+        task.standardOutput = pipe
+        task.standardError = pipe
+
+        do {
+            try task.run()
+//            task.waitUntilExit()
+
+        } catch {
+            throw ParsingError.aapt2ExecutionFailed(error)
+        }
+
+        let data = pipe.fileHandleForReading.readDataToEndOfFile()
+        task.waitUntilExit()
+
+
+
+        guard task.terminationStatus == 0 else {
+            throw ParsingError.invalidArchiveFormat
+        }
+
+        let output = String(data: data, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+
+        let packageName = extractValue(from: output, for: "package: name")
+        let versionName = extractValue(from: output, for: "versionName")
+        let versionCode = extractValue(from: output, for: "versionCode")
+        let applicationLabel = extractValue(from: output, for: "application-label")
+        let permissions = extractPermissions(from: output)
+
+      // 3. 【非常重要】用完之后必须释放权限，否则会导致系统内存泄露
+         if isSecured {
+             url.stopAccessingSecurityScopedResource()
+         }
+
+        return AppInfo(
+            name: applicationLabel,
+            bundleIdentifier: packageName,
+            version: versionName,
+            buildNumber: versionCode,
+            icon: nil,
+            embeddedProvisioningProfile: nil,
+            entitlements: permissions.reduce(into: [:]) { $0[$1] = .string($1) },
+            deviceFamily: [],
+            minimumOSVersion: nil,
+            sdkVersion: nil
+        )
+    }
+
+    private static func extractValue(from output: String, for key: String) -> String {
+        let pattern = "\(key)='([^']*)'"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        let range = NSRange(location: 0, length: output.utf16.count)
+        if let match = regex?.firstMatch(in: output, options: [], range: range) {
+            if let valueRange = Range(match.range(at: 1), in: output) {
+                return String(output[valueRange])
+            }
+        }
+        return ""
+    }
+
+    private static func extractPermissions(from output: String) -> [String] {
+        let pattern = "uses-permission: name='([^']*)'"
+        let regex = try? NSRegularExpression(pattern: pattern)
+        let range = NSRange(location: 0, length: output.utf16.count)
+        let matches = regex?.matches(in: output, options: [], range: range) ?? []
+
+        return matches.compactMap {
+            if let valueRange = Range($0.range(at: 1), in: output) {
+                return String(output[valueRange])
+            }
+            return nil
         }
     }
 }

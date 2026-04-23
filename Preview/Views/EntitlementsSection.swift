@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EntitlementsSection: View {
     let entitlements: [String: EntitlementValue]
+    var isAPK: Bool = false
 
     var body: some View {
         Text(formattedEntitlements)
@@ -23,6 +24,10 @@ private extension EntitlementsSection {
     }
 
     var formattedEntitlements: String {
+        if isAPK {
+            return "apk has no entitlements"
+        }
+
         var result = ""
 
         for (key, value) in sortedEntitlements {

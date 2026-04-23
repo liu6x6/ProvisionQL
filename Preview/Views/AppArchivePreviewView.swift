@@ -42,8 +42,9 @@ struct AppArchivePreviewView: View {
 
                 if !appInfo.entitlements.isEmpty {
                     Divider()
-                    section(title: "App Entitlements") {
-                        EntitlementsSection(entitlements: appInfo.entitlements)
+                    let title = fileURL?.pathExtension == "apk" ? "Permissions" : "App Entitlements"
+                    section(title: title) {
+                        EntitlementsSection(entitlements: appInfo.entitlements, isAPK: fileURL?.pathExtension == "apk")
                     }
                 }
 

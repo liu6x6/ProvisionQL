@@ -17,6 +17,7 @@
 				<string>com.apple.xcode.archive</string>
 				<string>com.apple.application-and-system-extension</string>
 				<string>com.apple.application-bundle</string>
+				<string>com.android.apk</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>

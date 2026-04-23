@@ -20,6 +20,9 @@ let package = Package(
             name: "ProvisionQLCore",
             dependencies: ["ZIPFoundation"],
             path: "Sources",
+            resources: [
+                .copy("Resources/aapt2")
+            ],
             swiftSettings: [
                 .enableExperimentalFeature("StrictConcurrency")
             ]
