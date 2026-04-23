@@ -299,15 +299,17 @@ private extension AppArchiveParser {
         let axml = try AXMLManifestParser(data: manifestData)
         let versionName = axml.version
         let versionCode = axml.buildNumber
+        let icon = try? IconExtractor.extractIcon(from: url)
 
         return AppInfo(
             name: axml.name,
             bundleIdentifier: axml.bundleIdentifier,
             version: versionName,
             buildNumber: versionCode,
-            icon: nil,
+            icon: icon,
             embeddedProvisioningProfile: nil,
-            entitlements: axml.permissions.reduce(into: [:]) { $0[$1] = .string($1) },
+            entitlements: [:],
+            permissions: axml.permissions,
             deviceFamily: [],
             minimumOSVersion: axml.minimumOSVersion,
             sdkVersion: axml.sdkVersion

@@ -20,6 +20,8 @@ public enum IconExtractor {
             return try extractFromXCArchive(url)
         case "appex":
             return try extractFromAppBundle(url)
+        case "apk":
+            return try extractFromAPK(url)
         default:
             return nil
         }
@@ -64,6 +66,89 @@ private extension IconExtractor {
             }
         }
 
+        return nil
+    }
+
+    static func extractFromAPK(_ url: URL) throws -> NSImage? {
+        let fileData = try Data(contentsOf: url)
+        let archive = try Archive(data: fileData, accessMode: .read)
+        
+        let preferredDirs = [
+            "res/mipmap-xxxhdpi",
+            "res/mipmap-xxhdpi",
+            "res/mipmap-xhdpi",
+            "res/mipmap-hdpi",
+            "res/mipmap-mdpi",
+            "res/drawable-xxxhdpi",
+            "res/drawable-xxhdpi",
+            "res/drawable-xhdpi",
+            "res/drawable-hdpi",
+            "res/drawable-mdpi",
+            "res/mipmap",
+            "res/drawable"
+        ]
+        
+        let possibleNames = [
+            "ic_launcher_round.png",
+            "ic_launcher.png",
+            "app_icon.png",
+            "icon.png",
+            "logo.png",
+            "ic_launcher_round.webp",
+            "ic_launcher.webp"
+        ]
+        
+        for dir in preferredDirs {
+            for name in possibleNames {
+                // Check standard path
+                let path = "\(dir)/\(name)"
+                if let imageData = try? ArchiveUtilities.extractFileOptional(from: archive, path: path),
+                   let image = NSImage(data: imageData) {
+                    return applyRoundedCorners(to: image)
+                }
+                
+                // Check v26 path fallback
+                let pathV26 = "\(dir)-v26/\(name)"
+                if let imageData = try? ArchiveUtilities.extractFileOptional(from: archive, path: pathV26),
+                   let image = NSImage(data: imageData) {
+                    return applyRoundedCorners(to: image)
+                }
+            }
+        }
+        
+        // Dynamic search as last resort
+        var bestPath: String?
+        var bestScore = -1
+        
+        for entry in archive {
+            let path = entry.path
+            let lowercased = path.lowercased()
+            if path.hasPrefix("res/") && (path.hasSuffix(".png") || path.hasSuffix(".webp")) {
+                if lowercased.contains("launcher") || lowercased.contains("icon") {
+                    var score = 0
+                    if path.contains("-xxxhdpi") { score += 60 }
+                    else if path.contains("-xxhdpi") { score += 50 }
+                    else if path.contains("-xhdpi") { score += 40 }
+                    else if path.contains("-hdpi") { score += 30 }
+                    else if path.contains("-mdpi") { score += 20 }
+                    else if path.contains("mipmap") { score += 10 }
+                    
+                    if lowercased.contains("round") { score += 5 }
+                    
+                    if score > bestScore {
+                        bestScore = score
+                        bestPath = path
+                    }
+                }
+            }
+        }
+        
+        if let bestPath = bestPath,
+           let imageData = try? ArchiveUtilities.extractFileOptional(from: archive, path: bestPath),
+           let image = NSImage(data: imageData) {
+            return applyRoundedCorners(to: image)
+        }
+        
         return nil
     }
 

@@ -24,9 +24,7 @@ private extension EntitlementsSection {
     }
 
     var formattedEntitlements: String {
-        if isAPK {
-            return "apk has no entitlements"
-        }
+        
 
         var result = ""
 
@@ -64,5 +62,22 @@ private extension EntitlementsSection {
             result += "}"
             return result
         }
+    }
+}
+
+
+struct PermissionsSection: View {
+    let permissions: [String]
+
+    var body: some View {
+        Text(formattedPermissions)
+            .codeText()
+            .sectionBackground()
+    }
+}
+
+private extension PermissionsSection {
+    var formattedPermissions: String {
+        return permissions.sorted().joined(separator: "\n")
     }
 }
