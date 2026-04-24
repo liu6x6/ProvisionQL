@@ -1,78 +1,19 @@
-//
-//  PreviewViewController.swift
-//  Preview
-//
-//  Created by Evgeny Aleksandrov
+import sys
 
-import Cocoa
-import ProvisionQLCore
-import Quartz
-import SwiftUI
-import UniformTypeIdentifiers
+filepath = "/Users/spxt666/ProvisionQL/Preview/PreviewViewController.swift"
+with open(filepath, "r") as f:
+    content = f.read()
 
-class PreviewViewController: NSViewController, QLPreviewingController {
-    private var hostingController: NSHostingController<AnyView>?
+marker = "struct ZipRootItem: Identifiable, Hashable {"
+if marker in content:
+    start_idx = content.find(marker)
+else:
+    print("Marker not found, please check the file.")
+    sys.exit(1)
 
-    override func loadView() {
-        let placeholderView = ProvisioningPreviewView(info: nil, fileURL: nil)
+base_content = content[:start_idx]
 
-        let hostingController = NSHostingController(rootView: AnyView(placeholderView))
-        self.hostingController = hostingController
-
-        view = hostingController.view
-        addChild(hostingController)
-
-        preferredContentSize = NSSize(width: 800, height: 600)
-    }
-
-    func preparePreviewOfFile(at url: URL) async throws {
-        let fileType = try url.resourceValues(forKeys: [.contentTypeKey]).contentType
-
-        if let contentType = fileType {
-            // Check for IPA files (which conform to data) or xcarchive files (which conform to package)
-            if contentType.identifier == "public.zip-archive" {
-                // Handle standard generic ZIP files
-                let archiveInfo = try ZipParser.parse(url)
-                let previewView = ZipArchivePreviewView(archiveInfo: archiveInfo, fileURL: url)
-                hostingController?.rootView = AnyView(previewView)
-            } else if contentType.identifier == "com.apple.itunes.ipa" ||
-                contentType.identifier == "com.apple.xcode.archive" ||
-                contentType.identifier == "com.apple.application-bundle" ||
-                url.pathExtension.lowercased() == "apk"
-            {
-                // Handle ipa/xcarchive/app files
-                let appInfo = try AppArchiveParser.parse(url)
-                let previewView = AppArchivePreviewView(appInfo: appInfo, fileURL: url)
-                hostingController?.rootView = AnyView(previewView)
-            } else if contentType.identifier == "com.apple.application-and-system-extension" {
-                // Handle .appex files
-                let appInfo = try AppArchiveParser.parse(url)
-                let previewView = AppArchivePreviewView(appInfo: appInfo, fileURL: url)
-                hostingController?.rootView = AnyView(previewView)
-            } else {
-                // Handle provisioning profile files
-                let info = try ProvisioningParser.parse(url)
-                let previewView = ProvisioningPreviewView(info: info, fileURL: url)
-                hostingController?.rootView = AnyView(previewView)
-            }
-        } else {
-            // Fallback to provisioning profile parsing
-            let info = try ProvisioningParser.parse(url)
-            let previewView = ProvisioningPreviewView(info: info, fileURL: url)
-            hostingController?.rootView = AnyView(previewView)
-        }
-    }
-}
-//
-//  ZipArchivePreviewView.swift
-//  Preview
-//
-//  Created by Gemini
-
-import SwiftUI
-import ProvisionQLCore
-
-struct ZipNode {
+new_view = """struct ZipNode {
     let name: String
     var isDirectory: Bool
     var size: Int64
@@ -165,7 +106,7 @@ struct ZipArchivePreviewView: View {
                 
                 GroupBox {
                     VStack(alignment: .leading, spacing: UIConstants.Padding.medium) {
-                        InfoRow(label: "Total Files", value: "\(archiveInfo.fileCount)")
+                        InfoRow(label: "Total Files", value: "\\(archiveInfo.fileCount)")
                         InfoRow(label: "Uncompressed Size", value: formatBytes(archiveInfo.totalUncompressedSize))
                         InfoRow(label: "Compressed Size", value: formatBytes(archiveInfo.totalCompressedSize))
                     }
@@ -191,7 +132,7 @@ struct ZipArchivePreviewView: View {
                             let allItems = flatItems
                             let items = Array(allItems.prefix(1000))
                             
-                            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                            ForEach(Array(items.enumerated()), id: \\.element.id) { index, item in
                                 HStack(spacing: 6) {
                                     if item.depth > 0 {
                                         Spacer()
@@ -212,7 +153,7 @@ struct ZipArchivePreviewView: View {
                                     Spacer()
                                     
                                     if item.isDirectory {
-                                        Text("\(item.itemCount) items")
+                                        Text("\\(item.itemCount) items")
                                             .foregroundColor(.secondary)
                                             .font(.caption)
                                             .frame(width: 80, alignment: .trailing)
@@ -231,7 +172,7 @@ struct ZipArchivePreviewView: View {
                             
                             if allItems.count > 1000 {
                                 Divider()
-                                Text("... and \(allItems.count - 1000) more items (truncated for preview)")
+                                Text("... and \\(allItems.count - 1000) more items (truncated for preview)")
                                     .italic()
                                     .foregroundColor(.secondary)
                                     .padding(.top, 8)
@@ -294,3 +235,9 @@ private extension ZipArchivePreviewView {
         return formatter.string(fromByteCount: bytes)
     }
 }
+"""
+
+with open(filepath, "w") as f:
+    f.write(base_content + new_view)
+
+print("UI successfully updated to Tree view.")

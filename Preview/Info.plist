@@ -18,6 +18,7 @@
 				<string>com.apple.application-and-system-extension</string>
 				<string>com.apple.application-bundle</string>
 				<string>com.android.apk</string>
+				<string>public.zip-archive</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>
