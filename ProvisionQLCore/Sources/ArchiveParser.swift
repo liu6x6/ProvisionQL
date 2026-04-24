@@ -8,6 +8,8 @@ import Foundation
 import ZIPFoundation
 import SWCompression
 
+
+
 public enum ArchiveParser {
     public static func parse(_ url: URL) throws -> ZipArchiveInfo {
         let fileExtension = url.pathExtension.lowercased()
@@ -24,6 +26,8 @@ public enum ArchiveParser {
             return try parseTar(url)
         case "7z":
             return try parse7z(url)
+        case "rar":
+            return try parseRar(url)
         default:
             throw ArchiveParserError.unsupportedFormat
         }
@@ -145,8 +149,41 @@ private extension ArchiveParser {
             files: files
         )
     }
+
+                    static func parseRar(_ url: URL) throws -> ZipArchiveInfo {
+        // FIXME: URKArchive is not available in the current isolated build context.
+        // Uncomment when UnrarKit is successfully resolved and imported.
+        // let archive = try URKArchive(url: url)
+        // let fileInfos = try archive.listFileInfo()
+        // 
+        // var files: [ZipFileInfo] = []
+        // var totalUncompressedSize: Int64 = 0
+        // 
+        // for info in fileInfos {
+        //     let fileInfo = ZipFileInfo(
+        //         path: info.name,
+        //         uncompressedSize: Int64(info.uncompressedSize),
+        //         compressedSize: 0, 
+        //         isDirectory: info.isDirectory
+        //     )
+        //     files.append(fileInfo)
+        //     if !info.isDirectory {
+        //         totalUncompressedSize += Int64(info.uncompressedSize)
+        //     }
+        // }
+        // 
+        // return ZipArchiveInfo(
+        //     name: url.lastPathComponent,
+        //     fileCount: files.filter { !bash.isDirectory }.count,
+        //     totalUncompressedSize: totalUncompressedSize,
+        //     totalCompressedSize: 0,
+        //     files: files
+        // )
+        throw ArchiveParserError.missingRarLibrary
+    }
 }
 
 public enum ArchiveParserError: Error {
     case unsupportedFormat
+    case missingRarLibrary
 }

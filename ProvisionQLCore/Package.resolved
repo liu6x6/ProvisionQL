@@ -1,6 +1,24 @@
 {
-  "originHash" : "698c054c42c66606fbb1fe6d7ebb386e1c77a65e0737d583c7a730b8cf03f943",
+  "originHash" : "0bcb7d28ddf6846d5f35c3fb186fc6cefbfd611f4ddf8c927f620be8431ed866",
   "pins" : [
+    {
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+        "version" : "2.0.4"
+      }
+    },
+    {
+      "identity" : "swcompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/SWCompression.git",
+      "state" : {
+        "revision" : "390e0b0af8dd19a600005a242a89e570ff482e09",
+        "version" : "4.8.6"
+      }
+    },
     {
       "identity" : "swiftaxml",
       "kind" : "remoteSourceControl",

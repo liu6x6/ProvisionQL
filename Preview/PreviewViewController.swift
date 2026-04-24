@@ -34,6 +34,8 @@ class PreviewViewController: NSViewController, QLPreviewingController {
                 contentType.identifier == "org.7-zip.7-zip-archive" ||
                 contentType.identifier == "org.gnu.gnu-zip-archive" ||
                 contentType.identifier == "public.tar-archive" ||
+                contentType.identifier == "com.rarlab.rar-archive" ||
+                url.pathExtension.lowercased() == "rar" ||
                 url.pathExtension.lowercased() == "7z" ||
                 url.pathExtension.lowercased() == "tar" ||
                 url.pathExtension.lowercased() == "gz" ||
