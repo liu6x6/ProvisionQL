@@ -30,9 +30,17 @@ class PreviewViewController: NSViewController, QLPreviewingController {
 
         if let contentType = fileType {
             // Check for IPA files (which conform to data) or xcarchive files (which conform to package)
-            if contentType.identifier == "public.zip-archive" {
+            if contentType.identifier == "public.zip-archive" ||
+                contentType.identifier == "org.7-zip.7-zip-archive" ||
+                contentType.identifier == "org.gnu.gnu-zip-archive" ||
+                contentType.identifier == "public.tar-archive" ||
+                url.pathExtension.lowercased() == "7z" ||
+                url.pathExtension.lowercased() == "tar" ||
+                url.pathExtension.lowercased() == "gz" ||
+                url.pathExtension.lowercased() == "tgz"
+            {
                 // Handle standard generic ZIP files
-                let archiveInfo = try ZipParser.parse(url)
+                let archiveInfo = try ArchiveParser.parse(url)
                 let previewView = ZipArchivePreviewView(archiveInfo: archiveInfo, fileURL: url)
                 hostingController?.rootView = AnyView(previewView)
             } else if contentType.identifier == "com.apple.itunes.ipa" ||
@@ -269,7 +277,7 @@ private extension ZipArchivePreviewView {
                     .font(.title)
                     .fontWeight(.bold)
                     
-                Text("ZIP Archive")
+                Text("Archive")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

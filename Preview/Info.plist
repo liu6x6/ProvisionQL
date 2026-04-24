@@ -19,6 +19,9 @@
 				<string>com.apple.application-bundle</string>
 				<string>com.android.apk</string>
 				<string>public.zip-archive</string>
+				<string>org.7-zip.7-zip-archive</string>
+				<string>org.gnu.gnu-zip-archive</string>
+				<string>public.tar-archive</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>

@@ -1,12 +1,29 @@
 {
-  "originHash" : "e614d544cdb37b2f9e2433adefc4dded3e252f0808ce1a058b03232d436c2659",
+  "originHash" : "e32dbb877dba4dd7b2f4a820fd5d528dbecb29757145df0a1bda6dcdcea52ccd",
   "pins" : [
+    {
+      "identity" : "bitbytedata",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/BitByteData",
+      "state" : {
+        "revision" : "cdcdc5177ad536cfb11b95c620f926a81014b7fe",
+        "version" : "2.0.4"
+      }
+    },
+    {
+      "identity" : "swcompression",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tsolomko/SWCompression.git",
+      "state" : {
+        "revision" : "390e0b0af8dd19a600005a242a89e570ff482e09",
+        "version" : "4.8.6"
+      }
+    },
     {
       "identity" : "swiftaxml",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/liu6x6/SwiftAXML.git",
       "state" : {
-        "branch" : "main",
         "revision" : "b7e8b99a141fc82da444423731b8b71588d6b6d0"
       }
     },

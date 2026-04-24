@@ -1,12 +1,11 @@
 {
-  "originHash" : "e614d544cdb37b2f9e2433adefc4dded3e252f0808ce1a058b03232d436c2659",
+  "originHash" : "698c054c42c66606fbb1fe6d7ebb386e1c77a65e0737d583c7a730b8cf03f943",
   "pins" : [
     {
       "identity" : "swiftaxml",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/liu6x6/SwiftAXML.git",
       "state" : {
-        "branch" : "main",
         "revision" : "b7e8b99a141fc82da444423731b8b71588d6b6d0"
       }
     },
