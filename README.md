@@ -1,3 +1,6 @@
+# use AI to support apk and zip
+[see here](./README_ENHANCED.md)
+
 # ProvisionQL - Quick Look for ipa & provision
 
 [![Build Status](https://github.com/ealeksandrov/ProvisionQL/workflows/build/badge.svg?branch=main)](https://github.com/ealeksandrov/ProvisionQL/actions)
