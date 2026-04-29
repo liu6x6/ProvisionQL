@@ -1,5 +1,6 @@
 # use AI to support apk and zip
 [see here](./README_ENHANCED.md)
+[how to debug preview](https://ianhocking.com/prog/posts/debugging-macos-thumbnails-previews/)
 
 # ProvisionQL - Quick Look for ipa & provision
 
