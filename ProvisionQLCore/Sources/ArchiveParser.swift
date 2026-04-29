@@ -13,7 +13,7 @@ public enum ArchiveParser {
         let fileExtension = url.pathExtension.lowercased()
         
         switch fileExtension {
-        case "zip":
+        case "zip", "jar", "war":
             return try parseZip(url)
         case "gz", "tgz":
             if url.path.lowercased().hasSuffix(".tar.gz") || fileExtension == "tgz" {
@@ -31,6 +31,21 @@ public enum ArchiveParser {
 }
 
 private extension ArchiveParser {
+    static func decodePath(entry: Entry) -> String {
+        let utf8Path = entry.path(using: .utf8)
+        if !utf8Path.isEmpty {
+            return utf8Path
+        }
+        
+        let gbkEncoding = String.Encoding(rawValue: CFStringConvertEncodingToNSStringEncoding(CFStringEncoding(CFStringEncodings.GB_18030_2000.rawValue)))
+        let gbkPath = entry.path(using: gbkEncoding)
+        if !gbkPath.isEmpty {
+            return gbkPath
+        }
+        
+        return entry.path
+    }
+
     static func parseZip(_ url: URL) throws -> ZipArchiveInfo {
         let fileData = try Data(contentsOf: url)
         let archive = try Archive(data: fileData, accessMode: .read)
@@ -45,7 +60,7 @@ private extension ArchiveParser {
             let compressed = Int64(entry.compressedSize)
             
             let fileInfo = ZipFileInfo(
-                path: entry.path,
+                path: decodePath(entry: entry),
                 uncompressedSize: uncompressed,
                 compressedSize: compressed,
                 isDirectory: isDirectory

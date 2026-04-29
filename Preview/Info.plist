@@ -22,6 +22,8 @@
 				<string>org.7-zip.7-zip-archive</string>
 				<string>org.gnu.gnu-zip-archive</string>
 				<string>public.tar-archive</string>
+				<string>com.sun.java-archive</string>
+				<string>com.sun.web-application-archive</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>
