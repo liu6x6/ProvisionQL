@@ -24,6 +24,8 @@
 				<string>public.tar-archive</string>
 				<string>com.rarlab.rar-archive</string>
 				<string>public.rar</string>
+				<string>com.sun.java-archive</string>
+				<string>com.sun.web-application-archive</string>
 			</array>
 			<key>QLSupportsSearchableItems</key>
 			<false/>

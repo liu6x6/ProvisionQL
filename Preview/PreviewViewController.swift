@@ -35,11 +35,15 @@ class PreviewViewController: NSViewController, QLPreviewingController {
                 contentType.identifier == "org.gnu.gnu-zip-archive" ||
                 contentType.identifier == "public.tar-archive" ||
                 contentType.identifier == "com.rarlab.rar-archive" ||
+                contentType.identifier == "com.sun.java-archive" ||
+                contentType.identifier == "com.sun.web-application-archive" ||
                 url.pathExtension.lowercased() == "rar" ||
                 url.pathExtension.lowercased() == "7z" ||
                 url.pathExtension.lowercased() == "tar" ||
                 url.pathExtension.lowercased() == "gz" ||
-                url.pathExtension.lowercased() == "tgz"
+                url.pathExtension.lowercased() == "tgz" ||
+                url.pathExtension.lowercased() == "jar" ||
+                url.pathExtension.lowercased() == "war"
             {
                 // Handle standard generic ZIP files
                 let archiveInfo = try ArchiveParser.parse(url)
