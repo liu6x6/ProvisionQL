@@ -300,9 +300,22 @@ private extension AppArchiveParser {
         let versionName = axml.version
         let versionCode = axml.buildNumber
         let icon = try? IconExtractor.extractIcon(from: url)
+        
+        var appName = axml.name
+        if appName.hasPrefix("@"), let resId = UInt32(appName.dropFirst(), radix: 16) {
+            if let entry = archive["resources.arsc"] {
+                var arscData = Data()
+                _ = try? archive.extract(entry) { data in
+                    arscData.append(data)
+                }
+                if let resolvedName = readARSC(data: arscData, targetResId: resId) {
+                    appName = resolvedName
+                }
+            }
+        }
 
         return AppInfo(
-            name: axml.name,
+            name: appName,
             bundleIdentifier: axml.bundleIdentifier,
             version: versionName,
             buildNumber: versionCode,
@@ -315,4 +328,174 @@ private extension AppArchiveParser {
             sdkVersion: axml.sdkVersion
         )
     }
+}
+
+// MARK: - ARSC Parsing Utilities for App Name Extraction
+
+private struct StringPool {
+    let data: Data
+    let stringCount: Int
+    let flags: UInt32
+    var stringsStart: Int
+    let offsets: [UInt32]
+
+    init?(data: Data, offset: Int) {
+        self.data = data
+        let type = data.withUnsafeBytes { $0.load(fromByteOffset: offset, as: UInt16.self).littleEndian }
+        guard type == 0x0001 else { return nil } // RES_STRING_POOL_TYPE
+        
+        let headerSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: offset + 2, as: UInt16.self).littleEndian })
+        
+        stringCount = Int(data.withUnsafeBytes { $0.load(fromByteOffset: offset + 8, as: UInt32.self).littleEndian })
+        flags = data.withUnsafeBytes { $0.load(fromByteOffset: offset + 16, as: UInt32.self).littleEndian }
+        stringsStart = Int(data.withUnsafeBytes { $0.load(fromByteOffset: offset + 20, as: UInt32.self).littleEndian })
+        
+        var offs = [UInt32]()
+        var cur = offset + headerSize
+        for _ in 0..<stringCount {
+            offs.append(data.withUnsafeBytes { $0.load(fromByteOffset: cur, as: UInt32.self).littleEndian })
+            cur += 4
+        }
+        self.offsets = offs
+        self.stringsStart += offset // absolute
+    }
+
+    func getString(at index: Int) -> String? {
+        guard index >= 0 && index < stringCount else { return nil }
+        let strOffset = stringsStart + Int(offsets[index])
+        
+        let isUTF8 = (flags & (1 << 8)) != 0
+        
+        if isUTF8 {
+            var cur = strOffset
+            let len1 = data[cur]; cur += 1
+            if (len1 & 0x80) != 0 { cur += 1 }
+            let len2 = data[cur]; cur += 1
+            var realLen = Int(len2)
+            if (len2 & 0x80) != 0 {
+                let len3 = data[cur]; cur += 1
+                realLen = ((Int(len2) & 0x7F) << 8) | Int(len3)
+            }
+            let strData = data.subdata(in: cur..<(cur + realLen))
+            return String(data: strData, encoding: .utf8)
+        } else {
+            var cur = strOffset
+            let len1 = data.withUnsafeBytes { $0.load(fromByteOffset: cur, as: UInt16.self).littleEndian }; cur += 2
+            var realLen = Int(len1)
+            if (len1 & 0x8000) != 0 {
+                let len2 = data.withUnsafeBytes { $0.load(fromByteOffset: cur, as: UInt16.self).littleEndian }; cur += 2
+                realLen = ((Int(len1) & 0x7FFF) << 16) | Int(len2)
+            }
+            let strData = data.subdata(in: cur..<(cur + realLen * 2))
+            return String(data: strData, encoding: .utf16LittleEndian)
+        }
+    }
+}
+
+private func readARSC(data: Data, targetResId: UInt32) -> String? {
+    guard data.count > 12 else { return nil }
+    var cursor = 0
+    let type = data.withUnsafeBytes { $0.load(fromByteOffset: cursor, as: UInt16.self).littleEndian }
+    guard type == 0x0002 else { return nil } // RES_TABLE_TYPE
+    
+    let headerSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 2, as: UInt16.self).littleEndian })
+    let packageCount = Int(data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 8, as: UInt32.self).littleEndian })
+    
+    cursor += headerSize
+    
+    let globalPoolType = data.withUnsafeBytes { $0.load(fromByteOffset: cursor, as: UInt16.self).littleEndian }
+    var globalPool: StringPool? = nil
+    if globalPoolType == 0x0001 {
+        let poolSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 4, as: UInt32.self).littleEndian })
+        globalPool = StringPool(data: data, offset: cursor)
+        cursor += poolSize
+    }
+    
+    let targetPP = (targetResId >> 24) & 0xFF
+    let targetTT = (targetResId >> 16) & 0xFF
+    let targetEEEE = targetResId & 0xFFFF
+    
+    var foundValues: [String: String] = [:] // locale -> string
+
+    var currentPackageIndex = 0
+    while cursor + 8 <= data.count && currentPackageIndex < packageCount {
+        let pType = data.withUnsafeBytes { $0.load(fromByteOffset: cursor, as: UInt16.self).littleEndian }
+        let pHeaderSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 2, as: UInt16.self).littleEndian })
+        let pSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 4, as: UInt32.self).littleEndian })
+        
+        if pType == 0x0200 { // RES_TABLE_PACKAGE_TYPE
+            let id = data.withUnsafeBytes { $0.load(fromByteOffset: cursor + 8, as: UInt32.self).littleEndian }
+            
+            if id == targetPP {
+                var pCursor = cursor + pHeaderSize
+                let pEnd = cursor + pSize
+                
+                while pCursor + 8 <= pEnd {
+                    let chunkType = data.withUnsafeBytes { $0.load(fromByteOffset: pCursor, as: UInt16.self).littleEndian }
+                    let chunkHeaderSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 2, as: UInt16.self).littleEndian })
+                    let chunkSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 4, as: UInt32.self).littleEndian })
+                    
+                    if chunkType == 0x0201 { // RES_TABLE_TYPE_TYPE
+                        let tId = data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 8, as: UInt8.self) }
+                        if tId == targetTT {
+                            let entryCount = Int(data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 12, as: UInt32.self).littleEndian })
+                            let entriesStart = Int(data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 16, as: UInt32.self).littleEndian })
+                            
+                            let configSize = Int(data.withUnsafeBytes { $0.load(fromByteOffset: pCursor + 20, as: UInt32.self).littleEndian })
+                            var lang = ""
+                            var country = ""
+                            if configSize >= 8 {
+                                let l1 = data[pCursor + 20 + 4], l2 = data[pCursor + 20 + 5]
+                                if l1 != 0 { lang = String(bytes: [l1, l2].filter { $0 != 0 }, encoding: .ascii) ?? "" }
+                                let c1 = data[pCursor + 20 + 6], c2 = data[pCursor + 20 + 7]
+                                if c1 != 0 { country = String(bytes: [c1, c2].filter { $0 != 0 }, encoding: .ascii) ?? "" }
+                            }
+                            let locale = lang.isEmpty ? "default" : (country.isEmpty ? lang : "\(lang)-\(country)")
+                            
+                            if targetEEEE < entryCount {
+                                let offsetOffset = pCursor + chunkHeaderSize + Int(targetEEEE * 4)
+                                let entryOffset = data.withUnsafeBytes { $0.load(fromByteOffset: offsetOffset, as: UInt32.self).littleEndian }
+                                
+                                if entryOffset != 0xFFFFFFFF {
+                                    let entryCursor = pCursor + entriesStart + Int(entryOffset)
+                                    if entryCursor + 8 <= data.count {
+                                        let flags = data.withUnsafeBytes { $0.load(fromByteOffset: entryCursor + 2, as: UInt16.self).littleEndian }
+                                        let isComplex = (flags & 0x0001) != 0
+                                        
+                                        if !isComplex {
+                                            let size = Int(data.withUnsafeBytes { $0.load(fromByteOffset: entryCursor, as: UInt16.self).littleEndian })
+                                            let valueCursor = entryCursor + size
+                                            if valueCursor + 8 <= data.count {
+                                                let dataType = data[valueCursor + 3]
+                                                let dataVal = Int(data.withUnsafeBytes { $0.load(fromByteOffset: valueCursor + 4, as: UInt32.self).littleEndian })
+                                                
+                                                if dataType == 0x03 { // TYPE_STRING
+                                                    if let str = globalPool?.getString(at: dataVal) {
+                                                        foundValues[locale] = str
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    pCursor += chunkSize
+                }
+            }
+        }
+        cursor += pSize
+        currentPackageIndex += 1
+    }
+    
+    // We prefer Chinese/English based on common locales, fallback to default
+    let preferredLocales = ["zh-CN", "zh", "en-US", "en", "default"]
+    for loc in preferredLocales {
+        if let val = foundValues[loc] {
+            return val
+        }
+    }
+    
+    return foundValues.values.first
 }
