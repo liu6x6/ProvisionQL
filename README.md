@@ -1,4 +1,6 @@
 # use AI to support apk and zip
+<img width="800" height="641" alt="image" src="https://github.com/user-attachments/assets/350a6062-1dba-4a02-b03e-57e3cda66005" />
+
 [see here](./README_ENHANCED.md)
 [how to debug preview](https://ianhocking.com/prog/posts/debugging-macos-thumbnails-previews/)
 
